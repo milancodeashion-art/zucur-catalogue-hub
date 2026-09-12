@@ -41,10 +41,8 @@ export function VisitorGate() {
 
   return (
     <Dialog open={open}>
-      <DialogContent
-        showCloseButton={false}
-        className="max-w-md overflow-hidden border-0 p-0 sm:max-w-md"
-      >
+      <DialogContent className="max-w-md overflow-hidden border-0 p-0 [&>button]:hidden sm:max-w-md">
+
         <div className="bg-navy px-6 py-6 text-navy-foreground">
           <p className="font-display text-xs font-semibold uppercase tracking-[0.25em] text-gold">
             Wholesale Access
