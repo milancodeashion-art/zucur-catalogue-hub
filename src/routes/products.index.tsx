@@ -23,10 +23,10 @@ interface ProductSearch {
 
 export const Route = createFileRoute("/products/")({
   validateSearch: (search: Record<string, unknown>): ProductSearch => {
-    const q = typeof search.q === "string" && search.q.trim() ? search.q.trim().slice(0, 80) : undefined;
+    const q = typeof search['q'] === "string" && search['q'].trim() ? search['q'].trim().slice(0, 80) : undefined;
     const category =
-      typeof search.category === "string" && search.category.trim()
-        ? search.category.trim().slice(0, 80)
+      typeof search['category'] === "string" && search['category'].trim()
+        ? search['category'].trim().slice(0, 80)
         : undefined;
     return { ...(q ? { q } : {}), ...(category ? { category } : {}) };
   },
@@ -56,12 +56,12 @@ function ProductsPage() {
   const { data: products = [], isLoading } = useQuery(productsQuery);
   const { data: categories = [] } = useQuery(categoriesQuery);
 
-  const [term, setTerm] = useState(search.q ?? "");
+  const [term, setTerm] = useState(search['q'] ?? "");
   const [availability, setAvailability] = useState<"all" | "available" | "stock_out">("all");
   const [sort, setSort] = useState<SortKey>("newest");
 
-  const activeQuery = (search.q ?? "").toLowerCase();
-  const activeCategory = search.category ?? "all";
+  const activeQuery = (search['q'] ?? "").toLowerCase();
+  const activeCategory = search['category'] ?? "all";
 
   const results = useMemo(() => {
     let list = products.filter((product) => {
@@ -100,7 +100,7 @@ function ProductsPage() {
   function setCategory(value: string) {
     void navigate({
       search: {
-        ...(search.q ? { q: search.q } : {}),
+        ...(search['q'] ? { q: search['q'] } : {}),
         ...(value !== "all" ? { category: value } : {}),
       },
     });
@@ -172,9 +172,9 @@ function ProductsPage() {
               </Select>
             </div>
           </div>
-          {search.q ? (
+          {search['q'] ? (
             <p className="mt-3 text-xs text-muted-foreground">
-              Showing results for “{search.q}” ·{" "}
+              Showing results for “{search['q']}” ·{" "}
               <Button
                 variant="link"
                 className="h-auto p-0 text-xs"

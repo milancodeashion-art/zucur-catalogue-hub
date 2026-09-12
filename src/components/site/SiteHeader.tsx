@@ -25,7 +25,7 @@ export function SiteHeader() {
   function submitSearch(event: React.FormEvent) {
     event.preventDefault();
     setOpen(false);
-    void navigate({ to: "/products", search: { q: term.trim() || undefined } });
+    void navigate({ to: "/products", search: term.trim() ? { q: term.trim() } : {} });
   }
 
   return (

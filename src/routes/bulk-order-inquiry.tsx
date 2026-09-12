@@ -25,8 +25,8 @@ import { useVisitor } from "@/lib/visitor";
 export const Route = createFileRoute("/bulk-order-inquiry")({
   validateSearch: (search: Record<string, unknown>): { product?: string } => {
     const product =
-      typeof search.product === "string" && search.product.trim()
-        ? search.product.trim().slice(0, 120)
+      typeof search['product'] === "string" && search['product'].trim()
+        ? search['product'].trim().slice(0, 120)
         : undefined;
     return product ? { product } : {};
   },
@@ -47,6 +47,14 @@ export const Route = createFileRoute("/bulk-order-inquiry")({
   }),
   component: BulkOrderInquiryPage,
 });
+
+interface FieldErrors {
+  name?: string;
+  phone?: string;
+  email?: string;
+  quantity?: string;
+  message?: string;
+}
 
 interface FormState {
   productSlug: string;
@@ -74,7 +82,7 @@ function BulkOrderInquiryPage() {
     location: "",
     message: "",
   });
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<FieldErrors>({});
   const [saving, setSaving] = useState(false);
   const [done, setDone] = useState(false);
 
@@ -104,7 +112,7 @@ function BulkOrderInquiryPage() {
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-    const next: Record<string, string> = {};
+    const next: FieldErrors = {};
     const quantity = Number(form.quantity);
     if (form.name.trim().length < 2) next.name = "Enter your name";
     if (form.phone.trim().replace(/\D/g, "").length < 8) next.phone = "Enter a valid phone number";

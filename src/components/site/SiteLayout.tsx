@@ -21,8 +21,8 @@ export function PageHeader({
   eyebrow,
 }: {
   title: string;
-  subtitle?: string;
-  eyebrow?: string;
+  subtitle?: string | undefined;
+  eyebrow?: string | undefined;
 }) {
   return (
     <section className="bg-navy text-navy-foreground">
