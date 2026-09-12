@@ -42,8 +42,8 @@ export function VisitorProvider({ children }: { children: ReactNode }) {
       void supabase.rpc("register_visitor", {
         _name: stored.name,
         _phone: stored.phone,
-        _email: stored.email ?? undefined,
         _visitor_id: stored.id,
+        ...(stored.email ? { _email: stored.email } : {}),
       });
     }
   }, []);
@@ -54,7 +54,7 @@ export function VisitorProvider({ children }: { children: ReactNode }) {
       const { data, error } = await supabase.rpc("register_visitor", {
         _name: input.name.trim(),
         _phone: input.phone.trim(),
-        _email: email ?? undefined,
+        ...(email ? { _email: email } : {}),
       });
       if (error) throw error;
       const record: VisitorRecord = {
