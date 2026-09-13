@@ -1,0 +1,277 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
+import { Pencil, Plus, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import { supabase } from "@/integrations/supabase/client";
+
+export const Route = createFileRoute("/_authenticated/admin/categories")({
+  component: AdminCategories,
+});
+
+interface Draft {
+  id?: string;
+  name: string;
+  slug: string;
+  description: string;
+  image: string;
+  display_order: string;
+  active: boolean;
+}
+
+const EMPTY: Draft = {
+  name: "",
+  slug: "",
+  description: "",
+  image: "",
+  display_order: "0",
+  active: true,
+};
+
+function slugify(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+function AdminCategories() {
+  const queryClient = useQueryClient();
+  const [draft, setDraft] = useState<Draft | null>(null);
+
+  const categories = useQuery({
+    queryKey: ["admin-categories"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("categories")
+        .select("id, name, slug, description, image, display_order, active")
+        .order("display_order");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const save = useMutation({
+    mutationFn: async (input: Draft) => {
+      const payload = {
+        name: input.name.trim(),
+        slug: input.slug.trim() || slugify(input.name),
+        description: input.description.trim() || null,
+        image: input.image.trim() || null,
+        display_order: Number(input.display_order) || 0,
+        active: input.active,
+      };
+      if (input.id) {
+        const { error } = await supabase.from("categories").update(payload).eq("id", input.id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from("categories").insert(payload);
+        if (error) throw error;
+      }
+    },
+    onSuccess: () => {
+      toast.success("Category saved");
+      setDraft(null);
+      void queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
+      void queryClient.invalidateQueries({ queryKey: ["categories"] });
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+
+  const remove = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("categories").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Category deleted");
+      void queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
+      void queryClient.invalidateQueries({ queryKey: ["categories"] });
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h1 className="font-display text-2xl font-extrabold text-navy">Categories</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Organise the catalogue into wholesale categories.
+          </p>
+        </div>
+        <Button onClick={() => setDraft({ ...EMPTY })}>
+          <Plus className="size-4" />
+          New category
+        </Button>
+      </div>
+
+      <div className="overflow-x-auto rounded-lg border border-border bg-card shadow-sm">
+        <table className="w-full min-w-[680px] text-sm">
+          <thead className="bg-muted/60 text-left text-xs uppercase tracking-wide text-muted-foreground">
+            <tr>
+              <th className="px-4 py-3">Name</th>
+              <th className="px-4 py-3">Slug</th>
+              <th className="px-4 py-3">Order</th>
+              <th className="px-4 py-3">Status</th>
+              <th className="px-4 py-3 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border">
+            {categories.isLoading ? (
+              <tr>
+                <td colSpan={5} className="px-4 py-6 text-muted-foreground">
+                  Loading…
+                </td>
+              </tr>
+            ) : categories.data?.length ? (
+              categories.data.map((c) => (
+                <tr key={c.id}>
+                  <td className="px-4 py-3 font-medium text-navy">{c.name}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{c.slug}</td>
+                  <td className="px-4 py-3">{c.display_order}</td>
+                  <td className="px-4 py-3">{c.active ? "Active" : "Hidden"}</td>
+                  <td className="px-4 py-3">
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() =>
+                          setDraft({
+                            id: c.id,
+                            name: c.name,
+                            slug: c.slug,
+                            description: c.description ?? "",
+                            image: c.image ?? "",
+                            display_order: String(c.display_order),
+                            active: c.active,
+                          })
+                        }
+                      >
+                        <Pencil className="size-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          if (confirm(`Delete ${c.name}?`)) remove.mutate(c.id);
+                        }}
+                      >
+                        <Trash2 className="size-4 text-destructive" />
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={5} className="px-4 py-6 text-muted-foreground">
+                  No categories yet.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      <Dialog open={draft !== null} onOpenChange={(open) => !open && setDraft(null)}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{draft?.id ? "Edit category" : "New category"}</DialogTitle>
+          </DialogHeader>
+          {draft ? (
+            <div className="grid gap-4">
+              <div>
+                <Label htmlFor="c-name">Name</Label>
+                <Input
+                  id="c-name"
+                  value={draft.name}
+                  onChange={(e) =>
+                    setDraft({
+                      ...draft,
+                      name: e.target.value,
+                      slug: draft.id ? draft.slug : slugify(e.target.value),
+                    })
+                  }
+                />
+              </div>
+              <div>
+                <Label htmlFor="c-slug">URL slug</Label>
+                <Input
+                  id="c-slug"
+                  value={draft.slug}
+                  onChange={(e) => setDraft({ ...draft, slug: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label htmlFor="c-desc">Description</Label>
+                <Textarea
+                  id="c-desc"
+                  rows={3}
+                  value={draft.description}
+                  onChange={(e) => setDraft({ ...draft, description: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label htmlFor="c-image">Image URL</Label>
+                <Input
+                  id="c-image"
+                  value={draft.image}
+                  onChange={(e) => setDraft({ ...draft, image: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label htmlFor="c-order">Display order</Label>
+                <Input
+                  id="c-order"
+                  type="number"
+                  value={draft.display_order}
+                  onChange={(e) => setDraft({ ...draft, display_order: e.target.value })}
+                />
+              </div>
+              <div className="flex items-center gap-3">
+                <Switch
+                  id="c-active"
+                  checked={draft.active}
+                  onCheckedChange={(v) => setDraft({ ...draft, active: v })}
+                />
+                <Label htmlFor="c-active">Visible on site</Label>
+              </div>
+            </div>
+          ) : null}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDraft(null)}>
+              Cancel
+            </Button>
+            <Button
+              disabled={save.isPending}
+              onClick={() => {
+                if (!draft) return;
+                if (!draft.name.trim()) {
+                  toast.error("Name is required");
+                  return;
+                }
+                save.mutate(draft);
+              }}
+            >
+              {save.isPending ? "Saving…" : "Save category"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
