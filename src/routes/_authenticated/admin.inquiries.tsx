@@ -33,9 +33,9 @@ function AdminInquiries() {
 
   const update = useMutation({
     mutationFn: async (input: { id: string; status?: string; admin_notes?: string }) => {
-      const patch: Record<string, string> = {};
-      if (input.status !== undefined) patch['status'] = input.status;
-      if (input.admin_notes !== undefined) patch['admin_notes'] = input.admin_notes;
+      const patch: { status?: string; admin_notes?: string } = {};
+      if (input.status !== undefined) patch.status = input.status;
+      if (input.admin_notes !== undefined) patch.admin_notes = input.admin_notes;
       const { error } = await supabase
         .from("bulk_order_inquiries")
         .update(patch)
