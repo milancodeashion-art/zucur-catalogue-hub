@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      banners: {
+        Row: {
+          active: boolean
+          button_link: string | null
+          button_text: string | null
+          created_at: string
+          description: string | null
+          display_order: number
+          id: string
+          image: string
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          button_link?: string | null
+          button_text?: string | null
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          image: string
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          button_link?: string | null
+          button_text?: string | null
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          image?: string
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       bulk_order_inquiries: {
         Row: {
           admin_notes: string | null
@@ -160,6 +199,7 @@ export type Database = {
           category_id: string | null
           created_at: string
           description: string | null
+          discounted_price: number | null
           featured: boolean
           id: string
           moq: number
@@ -176,6 +216,7 @@ export type Database = {
           category_id?: string | null
           created_at?: string
           description?: string | null
+          discounted_price?: number | null
           featured?: boolean
           id?: string
           moq?: number
@@ -192,6 +233,7 @@ export type Database = {
           category_id?: string | null
           created_at?: string
           description?: string | null
+          discounted_price?: number | null
           featured?: boolean
           id?: string
           moq?: number
