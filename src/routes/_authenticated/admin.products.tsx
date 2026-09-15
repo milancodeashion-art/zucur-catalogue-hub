@@ -1,9 +1,11 @@
+import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { Pencil, Plus, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
+import { ImageUploader } from "@/components/admin/ImageUploader";
+import { Pagination } from "@/components/admin/Pagination";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -22,6 +24,8 @@ export const Route = createFileRoute("/_authenticated/admin/products")({
   component: AdminProducts,
 });
 
+const PAGE_SIZE = 12;
+
 interface Draft {
   id?: string;
   name: string;
@@ -31,11 +35,12 @@ interface Draft {
   description: string;
   specifications: string;
   price: string;
+  discounted_price: string;
   moq: string;
   stock_status: "available" | "stock_out";
   featured: boolean;
   active: boolean;
-  images: string;
+  images: string[];
 }
 
 const EMPTY: Draft = {
@@ -46,11 +51,12 @@ const EMPTY: Draft = {
   description: "",
   specifications: "",
   price: "",
+  discounted_price: "",
   moq: "1",
   stock_status: "available",
   featured: false,
   active: true,
-  images: "",
+  images: [],
 };
 
 function slugify(value: string) {
@@ -60,23 +66,25 @@ function slugify(value: string) {
     .replace(/^-|-$/g, "");
 }
 
+const SELECT =
+  "id, name, slug, sku, category_id, description, specifications, price, discounted_price, moq, stock_status, featured, active, created_at, category:categories(name), product_images(image_url, display_order)";
+
 function AdminProducts() {
   const queryClient = useQueryClient();
   const [draft, setDraft] = useState<Draft | null>(null);
+  const [term, setTerm] = useState("");
+  const [search, setSearch] = useState("");
+  const [stock, setStock] = useState<"all" | "available" | "stock_out">("all");
+  const [page, setPage] = useState(1);
 
-  const products = useQuery({
-    queryKey: ["admin-products"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("products")
-        .select(
-          "id, name, slug, sku, category_id, description, specifications, price, moq, stock_status, featured, active, created_at, product_images(image_url, display_order)",
-        )
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data;
-    },
-  });
+  useEffect(() => {
+    const timer = setTimeout(() => setSearch(term.trim()), 300);
+    return () => clearTimeout(timer);
+  }, [term]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [search, stock]);
 
   const categories = useQuery({
     queryKey: ["admin-categories-list"],
@@ -90,8 +98,41 @@ function AdminProducts() {
     },
   });
 
+  const categoryList = categories.data ?? [];
+
+  const products = useQuery({
+    queryKey: ["admin-products", search, stock, page],
+    queryFn: async () => {
+      let query = supabase.from("products").select(SELECT, { count: "exact" });
+      if (stock !== "all") query = query.eq("stock_status", stock);
+      if (search) {
+        const like = `%${search.replace(/[,()]/g, " ")}%`;
+        const parts = [`name.ilike.${like}`, `sku.ilike.${like}`, `description.ilike.${like}`];
+        const numeric = Number(search);
+        if (search !== "" && Number.isFinite(numeric)) {
+          parts.push(`price.eq.${numeric}`, `discounted_price.eq.${numeric}`);
+        }
+        const matchedCategories = categoryList
+          .filter((c) => c.name.toLowerCase().includes(search.toLowerCase()))
+          .map((c) => c.id);
+        if (matchedCategories.length) {
+          parts.push(`category_id.in.(${matchedCategories.join(",")})`);
+        }
+        query = query.or(parts.join(","));
+      }
+      const from = (page - 1) * PAGE_SIZE;
+      const { data, error, count } = await query
+        .order("created_at", { ascending: false })
+        .range(from, from + PAGE_SIZE - 1);
+      if (error) throw error;
+      return { rows: data ?? [], count: count ?? 0 };
+    },
+  });
+
   const save = useMutation({
     mutationFn: async (input: Draft) => {
+      const price = input.price.trim() === "" ? null : Number(input.price);
+      const discounted = input.discounted_price.trim() === "" ? null : Number(input.discounted_price);
       const payload = {
         name: input.name.trim(),
         slug: input.slug.trim() || slugify(input.name),
@@ -99,7 +140,8 @@ function AdminProducts() {
         category_id: input.category_id || null,
         description: input.description.trim() || null,
         specifications: input.specifications.trim() || null,
-        price: input.price.trim() === "" ? null : Number(input.price),
+        price,
+        discounted_price: discounted,
         moq: Math.max(1, Number(input.moq) || 1),
         stock_status: input.stock_status,
         featured: input.featured,
@@ -119,14 +161,10 @@ function AdminProducts() {
         productId = data.id;
       }
 
-      const urls = input.images
-        .split("\n")
-        .map((line) => line.trim())
-        .filter(Boolean);
       await supabase.from("product_images").delete().eq("product_id", productId);
-      if (urls.length) {
+      if (input.images.length) {
         const { error } = await supabase.from("product_images").insert(
-          urls.map((image_url, index) => ({
+          input.images.map((image_url, index) => ({
             product_id: productId!,
             image_url,
             display_order: index,
@@ -141,7 +179,7 @@ function AdminProducts() {
       void queryClient.invalidateQueries({ queryKey: ["admin-products"] });
       void queryClient.invalidateQueries({ queryKey: ["products"] });
     },
-    onError: (error: Error) => toast.error(error.message),
+    onError: () => toast.error("Could not save the product. Please check the details and try again."),
   });
 
   const remove = useMutation({
@@ -154,8 +192,10 @@ function AdminProducts() {
       void queryClient.invalidateQueries({ queryKey: ["admin-products"] });
       void queryClient.invalidateQueries({ queryKey: ["products"] });
     },
-    onError: (error: Error) => toast.error(error.message),
+    onError: () => toast.error("Could not delete this product. Please try again."),
   });
+
+  const rows = products.data?.rows ?? [];
 
   return (
     <div className="space-y-6">
@@ -172,13 +212,38 @@ function AdminProducts() {
         </Button>
       </div>
 
+      <div className="flex flex-col gap-3 rounded-lg border border-border bg-card p-4 shadow-sm sm:flex-row">
+        <div className="relative flex-1">
+          <Search className="absolute left-2.5 top-2.5 size-4 text-muted-foreground" />
+          <Input
+            value={term}
+            onChange={(e) => setTerm(e.target.value)}
+            placeholder="Search products by name, SKU, price, category…"
+            className="pl-8"
+            aria-label="Search products"
+          />
+        </div>
+        <select
+          aria-label="Stock status"
+          className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm sm:w-44"
+          value={stock}
+          onChange={(e) => setStock(e.target.value as typeof stock)}
+        >
+          <option value="all">All stock status</option>
+          <option value="available">Available</option>
+          <option value="stock_out">Stock Out</option>
+        </select>
+      </div>
+
       <div className="overflow-x-auto rounded-lg border border-border bg-card shadow-sm">
-        <table className="w-full min-w-[840px] text-sm">
+        <table className="w-full min-w-[900px] text-sm">
           <thead className="bg-muted/60 text-left text-xs uppercase tracking-wide text-muted-foreground">
             <tr>
               <th className="px-4 py-3">Product</th>
               <th className="px-4 py-3">SKU</th>
+              <th className="px-4 py-3">Category</th>
               <th className="px-4 py-3">Price</th>
+              <th className="px-4 py-3">Offer</th>
               <th className="px-4 py-3">MOQ</th>
               <th className="px-4 py-3">Stock</th>
               <th className="px-4 py-3">Flags</th>
@@ -188,16 +253,20 @@ function AdminProducts() {
           <tbody className="divide-y divide-border">
             {products.isLoading ? (
               <tr>
-                <td colSpan={7} className="px-4 py-6 text-muted-foreground">
+                <td colSpan={9} className="px-4 py-6 text-muted-foreground">
                   Loading…
                 </td>
               </tr>
-            ) : products.data?.length ? (
-              products.data.map((p) => (
+            ) : rows.length ? (
+              rows.map((p) => (
                 <tr key={p.id}>
                   <td className="px-4 py-3 font-medium text-navy">{p.name}</td>
                   <td className="px-4 py-3 text-muted-foreground">{p.sku}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{p.category?.name ?? "—"}</td>
                   <td className="px-4 py-3">{p.price ?? "On request"}</td>
+                  <td className="px-4 py-3 font-medium text-success">
+                    {p.discounted_price ?? "—"}
+                  </td>
                   <td className="px-4 py-3">{p.moq}</td>
                   <td className="px-4 py-3">
                     {p.stock_status === "stock_out" ? "Stock out" : "Available"}
@@ -222,14 +291,15 @@ function AdminProducts() {
                             description: p.description ?? "",
                             specifications: p.specifications ?? "",
                             price: p.price === null ? "" : String(p.price),
+                            discounted_price:
+                              p.discounted_price === null ? "" : String(p.discounted_price),
                             moq: String(p.moq),
                             stock_status: p.stock_status === "stock_out" ? "stock_out" : "available",
                             featured: p.featured,
                             active: p.active,
                             images: [...(p.product_images ?? [])]
                               .sort((a, b) => a.display_order - b.display_order)
-                              .map((img) => img.image_url)
-                              .join("\n"),
+                              .map((img) => img.image_url),
                           })
                         }
                       >
@@ -250,14 +320,22 @@ function AdminProducts() {
               ))
             ) : (
               <tr>
-                <td colSpan={7} className="px-4 py-6 text-muted-foreground">
-                  No products yet.
+                <td colSpan={9} className="px-4 py-6 text-muted-foreground">
+                  No products match this search.
                 </td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
+
+      <Pagination
+        page={page}
+        pageSize={PAGE_SIZE}
+        total={products.data?.count ?? 0}
+        onPageChange={setPage}
+        label="products"
+      />
 
       <Dialog open={draft !== null} onOpenChange={(open) => !open && setDraft(null)}>
         <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
@@ -305,7 +383,7 @@ function AdminProducts() {
                   onChange={(e) => setDraft({ ...draft, category_id: e.target.value })}
                 >
                   <option value="">Uncategorised</option>
-                  {categories.data?.map((c) => (
+                  {categoryList.map((c) => (
                     <option key={c.id} value={c.id}>
                       {c.name}
                     </option>
@@ -330,7 +408,7 @@ function AdminProducts() {
                 </select>
               </div>
               <div>
-                <Label htmlFor="p-price">Price (blank = on request)</Label>
+                <Label htmlFor="p-price">Regular price (blank = on request)</Label>
                 <Input
                   id="p-price"
                   type="number"
@@ -339,6 +417,20 @@ function AdminProducts() {
                   value={draft.price}
                   onChange={(e) => setDraft({ ...draft, price: e.target.value })}
                 />
+              </div>
+              <div>
+                <Label htmlFor="p-discount">Discounted price (optional)</Label>
+                <Input
+                  id="p-discount"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={draft.discounted_price}
+                  onChange={(e) => setDraft({ ...draft, discounted_price: e.target.value })}
+                />
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Leave blank for no offer. Must not exceed the regular price.
+                </p>
               </div>
               <div>
                 <Label htmlFor="p-moq">MOQ</Label>
@@ -369,12 +461,12 @@ function AdminProducts() {
                 />
               </div>
               <div className="sm:col-span-2">
-                <Label htmlFor="p-images">Image URLs (one per line)</Label>
-                <Textarea
-                  id="p-images"
-                  rows={3}
+                <ImageUploader
+                  label="Product images (first image is the main image)"
+                  folder="products"
+                  multiple
                   value={draft.images}
-                  onChange={(e) => setDraft({ ...draft, images: e.target.value })}
+                  onChange={(images) => setDraft({ ...draft, images })}
                 />
               </div>
               <div className="flex items-center gap-3">
@@ -406,6 +498,23 @@ function AdminProducts() {
                 if (!draft.name.trim() || !draft.sku.trim()) {
                   toast.error("Name and SKU are required");
                   return;
+                }
+                const price = draft.price.trim() === "" ? null : Number(draft.price);
+                const discounted =
+                  draft.discounted_price.trim() === "" ? null : Number(draft.discounted_price);
+                if (discounted !== null) {
+                  if (!Number.isFinite(discounted) || discounted < 0) {
+                    toast.error("Discounted price must be a positive number.");
+                    return;
+                  }
+                  if (price === null) {
+                    toast.error("Add a regular price before setting a discounted price.");
+                    return;
+                  }
+                  if (discounted > price) {
+                    toast.error("Discounted price cannot be greater than the regular price.");
+                    return;
+                  }
                 }
                 save.mutate(draft);
               }}
