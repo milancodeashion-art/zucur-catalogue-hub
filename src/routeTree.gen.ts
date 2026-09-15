@@ -29,6 +29,7 @@ import { Route as AuthenticatedAdminProductsRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as AuthenticatedAdminVisitorsRouteImport } from './routes/_authenticated/admin.visitors'
 import { Route as AuthenticatedAdminWhatsappRouteImport } from './routes/_authenticated/admin.whatsapp'
+import { Route as ApiPublicImagesSplatRouteImport } from './routes/api/public/images/$'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -135,6 +136,11 @@ const AuthenticatedAdminWhatsappRoute =
     path: '/whatsapp',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const ApiPublicImagesSplatRoute = ApiPublicImagesSplatRouteImport.update({
+  id: '/api/public/images/$',
+  path: '/api/public/images/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -156,6 +162,7 @@ export interface FileRoutesByFullPath {
   '/admin/visitors': typeof AuthenticatedAdminVisitorsRoute
   '/admin/whatsapp': typeof AuthenticatedAdminWhatsappRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/api/public/images/$': typeof ApiPublicImagesSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -176,6 +183,7 @@ export interface FileRoutesByTo {
   '/admin/visitors': typeof AuthenticatedAdminVisitorsRoute
   '/admin/whatsapp': typeof AuthenticatedAdminWhatsappRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/api/public/images/$': typeof ApiPublicImagesSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -199,6 +207,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/visitors': typeof AuthenticatedAdminVisitorsRoute
   '/_authenticated/admin/whatsapp': typeof AuthenticatedAdminWhatsappRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/api/public/images/$': typeof ApiPublicImagesSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -222,6 +231,7 @@ export interface FileRouteTypes {
     | '/admin/visitors'
     | '/admin/whatsapp'
     | '/admin/'
+    | '/api/public/images/$'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -242,6 +252,7 @@ export interface FileRouteTypes {
     | '/admin/visitors'
     | '/admin/whatsapp'
     | '/admin'
+    | '/api/public/images/$'
   id:
     | '__root__'
     | '/'
@@ -264,6 +275,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/visitors'
     | '/_authenticated/admin/whatsapp'
     | '/_authenticated/admin/'
+    | '/api/public/images/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -279,6 +291,7 @@ export interface RootRouteChildren {
   ProductsSlugRoute: typeof ProductsSlugRoute
   CategoriesIndexRoute: typeof CategoriesIndexRoute
   ProductsIndexRoute: typeof ProductsIndexRoute
+  ApiPublicImagesSplatRoute: typeof ApiPublicImagesSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -423,6 +436,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminWhatsappRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/api/public/images/$': {
+      id: '/api/public/images/$'
+      path: '/api/public/images/$'
+      fullPath: '/api/public/images/$'
+      preLoaderRoute: typeof ApiPublicImagesSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -473,6 +493,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProductsSlugRoute: ProductsSlugRoute,
   CategoriesIndexRoute: CategoriesIndexRoute,
   ProductsIndexRoute: ProductsIndexRoute,
+  ApiPublicImagesSplatRoute: ApiPublicImagesSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

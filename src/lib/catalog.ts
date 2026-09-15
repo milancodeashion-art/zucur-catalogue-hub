@@ -28,6 +28,7 @@ export interface Product {
   description: string | null;
   specifications: string | null;
   price: number | null;
+  discounted_price: number | null;
   moq: number;
   stock_status: StockStatus;
   featured: boolean;
@@ -50,7 +51,7 @@ export interface SiteSettings {
 }
 
 const PRODUCT_SELECT =
-  "id, category_id, name, slug, sku, description, specifications, price, moq, stock_status, featured, active, created_at, category:categories(name, slug), product_images(image_url, display_order)";
+  "id, category_id, name, slug, sku, description, specifications, price, discounted_price, moq, stock_status, featured, active, created_at, category:categories(name, slug), product_images(image_url, display_order)";
 
 function unwrap<T>(data: unknown): T {
   return data as T;
