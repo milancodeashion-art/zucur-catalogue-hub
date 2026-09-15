@@ -74,7 +74,9 @@ function ProductsPage() {
       return (
         product.name.toLowerCase().includes(activeQuery) ||
         product.sku.toLowerCase().includes(activeQuery) ||
-        (product.description ?? "").toLowerCase().includes(activeQuery)
+        (product.description ?? "").toLowerCase().includes(activeQuery) ||
+        String(product.price ?? "").includes(activeQuery) ||
+        String(product.discounted_price ?? "").includes(activeQuery)
       );
     });
 

@@ -27,7 +27,15 @@ export function buildEnquiryMessage(
     lines.push(`Name: ${product.name}`);
     lines.push(`SKU: ${product.sku}`);
     if (product.category?.name) lines.push(`Category: ${product.category.name}`);
-    lines.push(`Price: ${formatPrice(product.price, settings?.currency ?? "INR")}`);
+    const currency = settings?.currency ?? "INR";
+    if (product.discounted_price !== null && product.discounted_price !== undefined) {
+      lines.push(`Price: ${formatPrice(product.discounted_price, currency)} (offer)`);
+      if (product.price !== null && product.price !== undefined) {
+        lines.push(`Regular Price: ${formatPrice(product.price, currency)}`);
+      }
+    } else {
+      lines.push(`Price: ${formatPrice(product.price, currency)}`);
+    }
     lines.push(`MOQ: ${product.moq} Units`);
     lines.push(`Availability: ${stockOut ? "Stock Out" : "Available"}`);
     if (stockOut) {

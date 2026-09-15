@@ -3,9 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import { ImageOff } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { formatPrice, productImage, settingsQuery, type Product } from "@/lib/catalog";
+import { productImage, settingsQuery, type Product } from "@/lib/catalog";
 
 import { MoqBadge, StockBadge } from "./badges";
+import { PriceTag } from "./PriceTag";
 import { WhatsappEnquiryButton } from "./WhatsappEnquiryButton";
 
 export function ProductCard({ product }: { product: Product }) {
@@ -50,9 +51,11 @@ export function ProductCard({ product }: { product: Product }) {
           {product.name}
         </Link>
         <p className="text-xs text-muted-foreground">SKU: {product.sku}</p>
-        <p className="mt-auto font-display text-lg font-extrabold text-navy">
-          {formatPrice(product.price, settings?.currency ?? "INR")}
-        </p>
+        <PriceTag
+          product={product}
+          currency={settings?.currency ?? "INR"}
+          className="mt-auto"
+        />
         <div className="flex flex-wrap gap-1.5">
           <MoqBadge moq={product.moq} />
           <StockBadge status={product.stock_status} />

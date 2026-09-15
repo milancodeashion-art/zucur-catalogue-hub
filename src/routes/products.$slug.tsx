@@ -8,7 +8,8 @@ import { MoqBadge, StockBadge } from "@/components/site/badges";
 import { ProductCard } from "@/components/site/ProductCard";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { WhatsappEnquiryButton } from "@/components/site/WhatsappEnquiryButton";
-import { formatPrice, productQuery, productsQuery, settingsQuery } from "@/lib/catalog";
+import { PriceTag } from "@/components/site/PriceTag";
+import { productQuery, productsQuery, settingsQuery } from "@/lib/catalog";
 
 export const Route = createFileRoute("/products/$slug")({
   head: () => ({
@@ -128,12 +129,12 @@ function ProductDetailPage() {
             </h1>
             <p className="mt-2 text-sm text-muted-foreground">SKU: {product.sku}</p>
 
-            <p className="mt-5 font-display text-3xl font-extrabold text-navy">
-              {formatPrice(product.price, settings?.currency ?? "INR")}
-              <span className="ml-2 align-middle text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <div className="mt-5">
+              <PriceTag product={product} currency={settings?.currency ?? "INR"} size="lg" />
+              <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 per unit · wholesale
-              </span>
-            </p>
+              </p>
+            </div>
 
             <div className="mt-4 flex flex-wrap gap-2">
               <MoqBadge moq={product.moq} />

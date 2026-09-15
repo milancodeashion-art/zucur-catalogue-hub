@@ -15,10 +15,11 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { HeroBannerCarousel } from "@/components/site/HeroBannerCarousel";
 import { ProductCard } from "@/components/site/ProductCard";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { WhatsappEnquiryButton } from "@/components/site/WhatsappEnquiryButton";
-import { categoriesQuery, productsQuery, settingsQuery } from "@/lib/catalog";
+import { bannersQuery, categoriesQuery, productsQuery, settingsQuery } from "@/lib/catalog";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -77,6 +78,7 @@ function HomePage() {
   const { data: categories = [] } = useQuery(categoriesQuery);
   const { data: products = [] } = useQuery(productsQuery);
   const { data: settings } = useQuery(settingsQuery);
+  const { data: banners = [] } = useQuery(bannersQuery);
 
   const featured = products.filter((p) => p.featured).slice(0, 8);
   const newest = products.slice(0, 4);
@@ -123,30 +125,34 @@ function HomePage() {
               </div>
             </dl>
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            {categories.slice(0, 4).map((category) => (
-              <Link
-                key={category.id}
-                to="/categories/$slug"
-                params={{ slug: category.slug }}
-                className="group relative overflow-hidden rounded-lg border border-navy-foreground/10"
-              >
-                {category.image ? (
-                  <img
-                    src={category.image}
-                    alt={category.name}
-                    loading="lazy"
-                    className="h-32 w-full object-cover transition-transform duration-300 group-hover:scale-105 sm:h-44"
-                  />
-                ) : (
-                  <div className="h-32 w-full bg-navy-foreground/10 sm:h-44" />
-                )}
-                <span className="absolute inset-x-0 bottom-0 bg-navy/80 px-3 py-2 text-xs font-semibold sm:text-sm">
-                  {category.name}
-                </span>
-              </Link>
-            ))}
-          </div>
+          {banners.length > 0 ? (
+            <HeroBannerCarousel banners={banners} />
+          ) : (
+            <div className="grid grid-cols-2 gap-3">
+              {categories.slice(0, 4).map((category) => (
+                <Link
+                  key={category.id}
+                  to="/categories/$slug"
+                  params={{ slug: category.slug }}
+                  className="group relative overflow-hidden rounded-lg border border-navy-foreground/10"
+                >
+                  {category.image ? (
+                    <img
+                      src={category.image}
+                      alt={category.name}
+                      loading="lazy"
+                      className="h-32 w-full object-cover transition-transform duration-300 group-hover:scale-105 sm:h-44"
+                    />
+                  ) : (
+                    <div className="h-32 w-full bg-navy-foreground/10 sm:h-44" />
+                  )}
+                  <span className="absolute inset-x-0 bottom-0 bg-navy/80 px-3 py-2 text-xs font-semibold sm:text-sm">
+                    {category.name}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
