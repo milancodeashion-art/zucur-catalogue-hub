@@ -126,3 +126,42 @@ export function formatPrice(price: number | null, currency = "INR"): string {
   const symbol = currency === "INR" ? "₹" : currency === "USD" ? "$" : `${currency} `;
   return `${symbol}${Number(price).toLocaleString("en-IN", { maximumFractionDigits: 2 })}`;
 }
+
+/** The price a buyer actually pays: discounted price when set, otherwise the regular price. */
+export function effectivePrice(product: Pick<Product, "price" | "discounted_price">): number | null {
+  return product.discounted_price ?? product.price ?? null;
+}
+
+export function hasDiscount(product: Pick<Product, "price" | "discounted_price">): boolean {
+  return (
+    product.discounted_price !== null &&
+    product.discounted_price !== undefined &&
+    product.price !== null &&
+    product.price !== undefined &&
+    product.discounted_price < product.price
+  );
+}
+
+export interface Banner {
+  id: string;
+  image: string;
+  title: string | null;
+  description: string | null;
+  button_text: string | null;
+  button_link: string | null;
+  display_order: number;
+  active: boolean;
+}
+
+export const bannersQuery = queryOptions({
+  queryKey: ["banners"],
+  queryFn: async (): Promise<Banner[]> => {
+    const { data, error } = await supabase
+      .from("banners")
+      .select("id, image, title, description, button_text, button_link, display_order, active")
+      .eq("active", true)
+      .order("display_order", { ascending: true });
+    if (error) throw error;
+    return unwrap<Banner[]>(data ?? []);
+  },
+});
