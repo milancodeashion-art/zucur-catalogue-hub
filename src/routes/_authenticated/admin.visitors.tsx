@@ -1,25 +1,42 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
+import { Pagination } from "@/components/admin/Pagination";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/admin/visitors")({
   component: AdminVisitors,
 });
 
+const PAGE_SIZE = 15;
+
 function AdminVisitors() {
+  const [page, setPage] = useState(1);
+
   const { data, isLoading } = useQuery({
-    queryKey: ["admin-visitors"],
+    queryKey: ["admin-visitors", page],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const from = (page - 1) * PAGE_SIZE;
+      const { data, error, count } = await supabase
         .from("visitors")
-        .select("id, name, phone, email, first_visit, last_visit, visit_count")
+        .select(
+          "id, name, phone, email, first_visit, last_visit, visit_count, whatsapp_enquiries(count)",
+          { count: "exact" },
+        )
         .order("last_visit", { ascending: false })
-        .limit(300);
+        .range(from, from + PAGE_SIZE - 1);
       if (error) throw error;
-      return data;
+      const rows = (data ?? []).map((row) => {
+        const relation = (row as unknown as { whatsapp_enquiries?: { count: number }[] })
+          .whatsapp_enquiries;
+        return { ...row, enquiries: relation?.[0]?.count ?? 0 };
+      });
+      return { rows, count: count ?? 0 };
     },
   });
+
+  const rows = data?.rows ?? [];
 
   return (
     <div className="space-y-6">
@@ -31,13 +48,14 @@ function AdminVisitors() {
       </div>
 
       <div className="overflow-x-auto rounded-lg border border-border bg-card shadow-sm">
-        <table className="w-full min-w-[720px] text-sm">
+        <table className="w-full min-w-[800px] text-sm">
           <thead className="bg-muted/60 text-left text-xs uppercase tracking-wide text-muted-foreground">
             <tr>
               <th className="px-4 py-3">Name</th>
               <th className="px-4 py-3">Phone</th>
               <th className="px-4 py-3">Email</th>
               <th className="px-4 py-3">Visits</th>
+              <th className="px-4 py-3">Enquiries</th>
               <th className="px-4 py-3">First visit</th>
               <th className="px-4 py-3">Last visit</th>
             </tr>
@@ -45,17 +63,18 @@ function AdminVisitors() {
           <tbody className="divide-y divide-border">
             {isLoading ? (
               <tr>
-                <td colSpan={6} className="px-4 py-6 text-muted-foreground">
+                <td colSpan={7} className="px-4 py-6 text-muted-foreground">
                   Loading…
                 </td>
               </tr>
-            ) : data?.length ? (
-              data.map((v) => (
+            ) : rows.length ? (
+              rows.map((v) => (
                 <tr key={v.id}>
                   <td className="px-4 py-3 font-medium text-navy">{v.name}</td>
                   <td className="px-4 py-3">{v.phone}</td>
                   <td className="px-4 py-3 text-muted-foreground">{v.email ?? "—"}</td>
                   <td className="px-4 py-3">{v.visit_count}</td>
+                  <td className="px-4 py-3 font-semibold text-primary">{v.enquiries}</td>
                   <td className="px-4 py-3 text-muted-foreground">
                     {new Date(v.first_visit).toLocaleDateString()}
                   </td>
@@ -66,7 +85,7 @@ function AdminVisitors() {
               ))
             ) : (
               <tr>
-                <td colSpan={6} className="px-4 py-6 text-muted-foreground">
+                <td colSpan={7} className="px-4 py-6 text-muted-foreground">
                   No visitors recorded yet.
                 </td>
               </tr>
@@ -74,6 +93,14 @@ function AdminVisitors() {
           </tbody>
         </table>
       </div>
+
+      <Pagination
+        page={page}
+        pageSize={PAGE_SIZE}
+        total={data?.count ?? 0}
+        onPageChange={setPage}
+        label="visitors"
+      />
     </div>
   );
 }
