@@ -2,6 +2,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link, Outlet, useNavigate } from "@tanstack/react-router";
 import {
   ClipboardList,
+  GalleryHorizontal,
   LayoutDashboard,
   LogOut,
   MessageCircle,
@@ -22,6 +23,7 @@ const NAV = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { to: "/admin/products", label: "Products", icon: Package },
   { to: "/admin/categories", label: "Categories", icon: Tags },
+  { to: "/admin/banners", label: "Banners", icon: GalleryHorizontal },
   { to: "/admin/inquiries", label: "Bulk Inquiries", icon: ClipboardList },
   { to: "/admin/whatsapp", label: "WhatsApp Log", icon: MessageCircle },
   { to: "/admin/visitors", label: "Visitors", icon: Users },

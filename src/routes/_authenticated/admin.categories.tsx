@@ -1,9 +1,11 @@
+import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { Pencil, Plus, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { ImageOff, Pencil, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
+import { ImageUploader } from "@/components/admin/ImageUploader";
+import { Pagination } from "@/components/admin/Pagination";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -21,6 +23,8 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/_authenticated/admin/categories")({
   component: AdminCategories,
 });
+
+const PAGE_SIZE = 10;
 
 interface Draft {
   id?: string;
@@ -51,18 +55,27 @@ function slugify(value: string) {
 function AdminCategories() {
   const queryClient = useQueryClient();
   const [draft, setDraft] = useState<Draft | null>(null);
+  const [page, setPage] = useState(1);
 
   const categories = useQuery({
-    queryKey: ["admin-categories"],
+    queryKey: ["admin-categories", page],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const from = (page - 1) * PAGE_SIZE;
+      const { data, error, count } = await supabase
         .from("categories")
-        .select("id, name, slug, description, image, display_order, active")
-        .order("display_order");
+        .select("id, name, slug, description, image, display_order, active", { count: "exact" })
+        .order("display_order")
+        .range(from, from + PAGE_SIZE - 1);
       if (error) throw error;
-      return data;
+      return { rows: data ?? [], count: count ?? 0 };
     },
   });
+
+  useEffect(() => {
+    const total = categories.data?.count ?? 0;
+    const pageCount = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    if (page > pageCount) setPage(pageCount);
+  }, [categories.data?.count, page]);
 
   const save = useMutation({
     mutationFn: async (input: Draft) => {
@@ -86,9 +99,10 @@ function AdminCategories() {
       toast.success("Category saved");
       setDraft(null);
       void queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
+      void queryClient.invalidateQueries({ queryKey: ["admin-categories-list"] });
       void queryClient.invalidateQueries({ queryKey: ["categories"] });
     },
-    onError: (error: Error) => toast.error(error.message),
+    onError: () => toast.error("Could not save the category. Please try again."),
   });
 
   const remove = useMutation({
@@ -99,10 +113,13 @@ function AdminCategories() {
     onSuccess: () => {
       toast.success("Category deleted");
       void queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
+      void queryClient.invalidateQueries({ queryKey: ["admin-categories-list"] });
       void queryClient.invalidateQueries({ queryKey: ["categories"] });
     },
-    onError: (error: Error) => toast.error(error.message),
+    onError: () => toast.error("Could not delete this category. Please try again."),
   });
+
+  const rows = categories.data?.rows ?? [];
 
   return (
     <div className="space-y-6">
@@ -120,9 +137,10 @@ function AdminCategories() {
       </div>
 
       <div className="overflow-x-auto rounded-lg border border-border bg-card shadow-sm">
-        <table className="w-full min-w-[680px] text-sm">
+        <table className="w-full min-w-[720px] text-sm">
           <thead className="bg-muted/60 text-left text-xs uppercase tracking-wide text-muted-foreground">
             <tr>
+              <th className="px-4 py-3">Image</th>
               <th className="px-4 py-3">Name</th>
               <th className="px-4 py-3">Slug</th>
               <th className="px-4 py-3">Order</th>
@@ -133,13 +151,26 @@ function AdminCategories() {
           <tbody className="divide-y divide-border">
             {categories.isLoading ? (
               <tr>
-                <td colSpan={5} className="px-4 py-6 text-muted-foreground">
+                <td colSpan={6} className="px-4 py-6 text-muted-foreground">
                   Loading…
                 </td>
               </tr>
-            ) : categories.data?.length ? (
-              categories.data.map((c) => (
+            ) : rows.length ? (
+              rows.map((c) => (
                 <tr key={c.id}>
+                  <td className="px-4 py-3">
+                    {c.image ? (
+                      <img
+                        src={c.image}
+                        alt={c.name}
+                        className="size-12 rounded-md border border-border object-cover"
+                      />
+                    ) : (
+                      <span className="grid size-12 place-items-center rounded-md bg-secondary text-muted-foreground">
+                        <ImageOff className="size-4" />
+                      </span>
+                    )}
+                  </td>
                   <td className="px-4 py-3 font-medium text-navy">{c.name}</td>
                   <td className="px-4 py-3 text-muted-foreground">{c.slug}</td>
                   <td className="px-4 py-3">{c.display_order}</td>
@@ -178,7 +209,7 @@ function AdminCategories() {
               ))
             ) : (
               <tr>
-                <td colSpan={5} className="px-4 py-6 text-muted-foreground">
+                <td colSpan={6} className="px-4 py-6 text-muted-foreground">
                   No categories yet.
                 </td>
               </tr>
@@ -186,6 +217,14 @@ function AdminCategories() {
           </tbody>
         </table>
       </div>
+
+      <Pagination
+        page={page}
+        pageSize={PAGE_SIZE}
+        total={categories.data?.count ?? 0}
+        onPageChange={setPage}
+        label="categories"
+      />
 
       <Dialog open={draft !== null} onOpenChange={(open) => !open && setDraft(null)}>
         <DialogContent className="max-h-[90vh] overflow-y-auto">
@@ -225,14 +264,12 @@ function AdminCategories() {
                   onChange={(e) => setDraft({ ...draft, description: e.target.value })}
                 />
               </div>
-              <div>
-                <Label htmlFor="c-image">Image URL</Label>
-                <Input
-                  id="c-image"
-                  value={draft.image}
-                  onChange={(e) => setDraft({ ...draft, image: e.target.value })}
-                />
-              </div>
+              <ImageUploader
+                label={draft.image ? "Category image" : "Upload category image"}
+                folder="categories"
+                value={draft.image ? [draft.image] : []}
+                onChange={(urls) => setDraft({ ...draft, image: urls[0] ?? "" })}
+              />
               <div>
                 <Label htmlFor="c-order">Display order</Label>
                 <Input
