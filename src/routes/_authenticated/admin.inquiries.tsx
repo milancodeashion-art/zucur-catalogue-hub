@@ -57,9 +57,7 @@ function AdminInquiries() {
     onError: (error: Error) => toast.error(error.message),
   });
 
-  const rows = (inquiries.data ?? []).filter(
-    (row) => filter === "All" || row.status === filter,
-  );
+  const rows = inquiries.data?.rows ?? [];
 
   return (
     <div className="space-y-6">
