@@ -156,6 +156,14 @@ function AdminInquiries() {
       ) : (
         <p className="text-sm text-muted-foreground">No inquiries in this view.</p>
       )}
+
+      <Pagination
+        page={page}
+        pageSize={PAGE_SIZE}
+        total={inquiries.data?.count ?? 0}
+        onPageChange={setPage}
+        label="inquiries"
+      />
     </div>
   );
 }
