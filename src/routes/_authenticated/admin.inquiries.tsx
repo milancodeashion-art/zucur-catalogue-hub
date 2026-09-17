@@ -1,8 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
+import { Pagination } from "@/components/admin/Pagination";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,22 +13,29 @@ export const Route = createFileRoute("/_authenticated/admin/inquiries")({
 });
 
 const STATUSES = ["New", "Contacted", "In Progress", "Completed", "Cancelled"] as const;
+const PAGE_SIZE = 12;
 
 function AdminInquiries() {
   const queryClient = useQueryClient();
   const [filter, setFilter] = useState<string>("All");
+  const [page, setPage] = useState(1);
   const [notes, setNotes] = useState<Record<string, string>>({});
 
+  useEffect(() => {
+    setPage(1);
+  }, [filter]);
+
   const inquiries = useQuery({
-    queryKey: ["admin-inquiries"],
+    queryKey: ["admin-inquiries", filter, page],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("bulk_order_inquiries")
-        .select("*")
+      let query = supabase.from("bulk_order_inquiries").select("*", { count: "exact" });
+      if (filter !== "All") query = query.eq("status", filter);
+      const from = (page - 1) * PAGE_SIZE;
+      const { data, error, count } = await query
         .order("created_at", { ascending: false })
-        .limit(300);
+        .range(from, from + PAGE_SIZE - 1);
       if (error) throw error;
-      return data;
+      return { rows: data ?? [], count: count ?? 0 };
     },
   });
 
@@ -49,9 +57,7 @@ function AdminInquiries() {
     onError: (error: Error) => toast.error(error.message),
   });
 
-  const rows = (inquiries.data ?? []).filter(
-    (row) => filter === "All" || row.status === filter,
-  );
+  const rows = inquiries.data?.rows ?? [];
 
   return (
     <div className="space-y-6">
@@ -150,6 +156,14 @@ function AdminInquiries() {
       ) : (
         <p className="text-sm text-muted-foreground">No inquiries in this view.</p>
       )}
+
+      <Pagination
+        page={page}
+        pageSize={PAGE_SIZE}
+        total={inquiries.data?.count ?? 0}
+        onPageChange={setPage}
+        label="inquiries"
+      />
     </div>
   );
 }

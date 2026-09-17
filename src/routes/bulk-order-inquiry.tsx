@@ -19,7 +19,7 @@ import { MoqBadge } from "@/components/site/badges";
 import { PageHeader, SiteLayout } from "@/components/site/SiteLayout";
 import { WhatsappEnquiryButton } from "@/components/site/WhatsappEnquiryButton";
 import { supabase } from "@/integrations/supabase/client";
-import { productsQuery } from "@/lib/catalog";
+import { categoriesQuery, productsQuery } from "@/lib/catalog";
 import { useVisitor } from "@/lib/visitor";
 
 export const Route = createFileRoute("/bulk-order-inquiry")({
@@ -57,6 +57,7 @@ interface FieldErrors {
 }
 
 interface FormState {
+  categorySlug: string;
   productSlug: string;
   companyName: string;
   quantity: string;
@@ -71,8 +72,10 @@ function BulkOrderInquiryPage() {
   const search = Route.useSearch();
   const { visitor } = useVisitor();
   const { data: products = [] } = useQuery(productsQuery);
+  const { data: categories = [] } = useQuery(categoriesQuery);
 
   const [form, setForm] = useState<FormState>({
+    categorySlug: "",
     productSlug: search.product ?? "",
     companyName: "",
     quantity: "",
@@ -99,6 +102,18 @@ function BulkOrderInquiryPage() {
 
   const selected = products.find((p) => p.slug === form.productSlug) ?? null;
   const moq = selected?.moq ?? 1;
+
+  // Pre-select the category when the form is opened from a product page.
+  useEffect(() => {
+    if (!form.categorySlug && selected?.category?.slug) {
+      setForm((prev) => ({ ...prev, categorySlug: selected.category!.slug }));
+    }
+  }, [form.categorySlug, selected]);
+
+  const activeCategory = categories.find((c) => c.slug === form.categorySlug) ?? null;
+  const categoryProducts = activeCategory
+    ? products.filter((p) => p.category_id === activeCategory.id)
+    : [];
 
   useEffect(() => {
     if (selected && !form.quantity) {
@@ -174,7 +189,13 @@ function BulkOrderInquiryPage() {
                   variant="outline"
                   onClick={() => {
                     setDone(false);
-                    setForm((prev) => ({ ...prev, productSlug: "", quantity: "", message: "" }));
+                    setForm((prev) => ({
+                      ...prev,
+                      categorySlug: "",
+                      productSlug: "",
+                      quantity: "",
+                      message: "",
+                    }));
                   }}
                 >
                   Submit another inquiry
@@ -186,10 +207,39 @@ function BulkOrderInquiryPage() {
               onSubmit={handleSubmit}
               className="grid gap-5 rounded-lg border border-border bg-card p-6 shadow-sm sm:grid-cols-2"
             >
-              <div className="space-y-1.5 sm:col-span-2">
+              <div className="space-y-1.5">
+                <Label htmlFor="category">Category</Label>
+                <Select
+                  value={form.categorySlug || "none"}
+                  onValueChange={(value) => {
+                    const slug = value === "none" ? "" : value;
+                    setForm((prev) => ({
+                      ...prev,
+                      categorySlug: slug,
+                      productSlug: "",
+                      quantity: "",
+                    }));
+                  }}
+                >
+                  <SelectTrigger id="category">
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">Multiple / custom requirement</SelectItem>
+                    {categories.map((category) => (
+                      <SelectItem key={category.id} value={category.slug}>
+                        {category.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-1.5">
                 <Label htmlFor="product">Product</Label>
                 <Select
                   value={form.productSlug || "none"}
+                  disabled={!form.categorySlug}
                   onValueChange={(value) => {
                     const slug = value === "none" ? "" : value;
                     const next = products.find((p) => p.slug === slug);
@@ -201,24 +251,36 @@ function BulkOrderInquiryPage() {
                   }}
                 >
                   <SelectTrigger id="product">
-                    <SelectValue placeholder="Select a product" />
+                    <SelectValue
+                      placeholder={
+                        form.categorySlug ? "Select a product" : "Please select a category first"
+                      }
+                    />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="none">Multiple / custom requirement</SelectItem>
-                    {products.map((product) => (
+                    <SelectItem value="none">Not product specific</SelectItem>
+                    {categoryProducts.map((product) => (
                       <SelectItem key={product.id} value={product.slug}>
                         {product.name} · {product.sku}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-                {selected ? (
-                  <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                    <span>SKU: {selected.sku}</span>
-                    <MoqBadge moq={selected.moq} />
-                  </div>
+                {!form.categorySlug ? (
+                  <p className="text-xs text-muted-foreground">Please select a category first.</p>
+                ) : categoryProducts.length === 0 ? (
+                  <p className="text-xs text-muted-foreground">
+                    No products available in this category.
+                  </p>
                 ) : null}
               </div>
+
+              {selected ? (
+                <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground sm:col-span-2">
+                  <span>SKU: {selected.sku}</span>
+                  <MoqBadge moq={selected.moq} />
+                </div>
+              ) : null}
 
               <div className="space-y-1.5">
                 <Label htmlFor="quantity">Required quantity *</Label>
