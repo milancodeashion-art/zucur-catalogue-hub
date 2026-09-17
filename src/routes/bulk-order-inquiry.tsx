@@ -103,6 +103,18 @@ function BulkOrderInquiryPage() {
   const selected = products.find((p) => p.slug === form.productSlug) ?? null;
   const moq = selected?.moq ?? 1;
 
+  // Pre-select the category when the form is opened from a product page.
+  useEffect(() => {
+    if (!form.categorySlug && selected?.category?.slug) {
+      setForm((prev) => ({ ...prev, categorySlug: selected.category!.slug }));
+    }
+  }, [form.categorySlug, selected]);
+
+  const activeCategory = categories.find((c) => c.slug === form.categorySlug) ?? null;
+  const categoryProducts = activeCategory
+    ? products.filter((p) => p.category_id === activeCategory.id)
+    : [];
+
   useEffect(() => {
     if (selected && !form.quantity) {
       setForm((prev) => ({ ...prev, quantity: String(selected.moq) }));
