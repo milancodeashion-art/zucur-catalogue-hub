@@ -189,7 +189,13 @@ function BulkOrderInquiryPage() {
                   variant="outline"
                   onClick={() => {
                     setDone(false);
-                    setForm((prev) => ({ ...prev, productSlug: "", quantity: "", message: "" }));
+                    setForm((prev) => ({
+                      ...prev,
+                      categorySlug: "",
+                      productSlug: "",
+                      quantity: "",
+                      message: "",
+                    }));
                   }}
                 >
                   Submit another inquiry
