@@ -201,10 +201,39 @@ function BulkOrderInquiryPage() {
               onSubmit={handleSubmit}
               className="grid gap-5 rounded-lg border border-border bg-card p-6 shadow-sm sm:grid-cols-2"
             >
-              <div className="space-y-1.5 sm:col-span-2">
+              <div className="space-y-1.5">
+                <Label htmlFor="category">Category</Label>
+                <Select
+                  value={form.categorySlug || "none"}
+                  onValueChange={(value) => {
+                    const slug = value === "none" ? "" : value;
+                    setForm((prev) => ({
+                      ...prev,
+                      categorySlug: slug,
+                      productSlug: "",
+                      quantity: "",
+                    }));
+                  }}
+                >
+                  <SelectTrigger id="category">
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">Multiple / custom requirement</SelectItem>
+                    {categories.map((category) => (
+                      <SelectItem key={category.id} value={category.slug}>
+                        {category.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-1.5">
                 <Label htmlFor="product">Product</Label>
                 <Select
                   value={form.productSlug || "none"}
+                  disabled={!form.categorySlug}
                   onValueChange={(value) => {
                     const slug = value === "none" ? "" : value;
                     const next = products.find((p) => p.slug === slug);
@@ -216,24 +245,36 @@ function BulkOrderInquiryPage() {
                   }}
                 >
                   <SelectTrigger id="product">
-                    <SelectValue placeholder="Select a product" />
+                    <SelectValue
+                      placeholder={
+                        form.categorySlug ? "Select a product" : "Please select a category first"
+                      }
+                    />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="none">Multiple / custom requirement</SelectItem>
-                    {products.map((product) => (
+                    <SelectItem value="none">Not product specific</SelectItem>
+                    {categoryProducts.map((product) => (
                       <SelectItem key={product.id} value={product.slug}>
                         {product.name} · {product.sku}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-                {selected ? (
-                  <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                    <span>SKU: {selected.sku}</span>
-                    <MoqBadge moq={selected.moq} />
-                  </div>
+                {!form.categorySlug ? (
+                  <p className="text-xs text-muted-foreground">Please select a category first.</p>
+                ) : categoryProducts.length === 0 ? (
+                  <p className="text-xs text-muted-foreground">
+                    No products available in this category.
+                  </p>
                 ) : null}
               </div>
+
+              {selected ? (
+                <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground sm:col-span-2">
+                  <span>SKU: {selected.sku}</span>
+                  <MoqBadge moq={selected.moq} />
+                </div>
+              ) : null}
 
               <div className="space-y-1.5">
                 <Label htmlFor="quantity">Required quantity *</Label>
