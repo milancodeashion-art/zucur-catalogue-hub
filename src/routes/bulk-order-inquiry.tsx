@@ -19,7 +19,7 @@ import { MoqBadge } from "@/components/site/badges";
 import { PageHeader, SiteLayout } from "@/components/site/SiteLayout";
 import { WhatsappEnquiryButton } from "@/components/site/WhatsappEnquiryButton";
 import { supabase } from "@/integrations/supabase/client";
-import { productsQuery } from "@/lib/catalog";
+import { categoriesQuery, productsQuery } from "@/lib/catalog";
 import { useVisitor } from "@/lib/visitor";
 
 export const Route = createFileRoute("/bulk-order-inquiry")({
@@ -57,6 +57,7 @@ interface FieldErrors {
 }
 
 interface FormState {
+  categorySlug: string;
   productSlug: string;
   companyName: string;
   quantity: string;
@@ -71,8 +72,10 @@ function BulkOrderInquiryPage() {
   const search = Route.useSearch();
   const { visitor } = useVisitor();
   const { data: products = [] } = useQuery(productsQuery);
+  const { data: categories = [] } = useQuery(categoriesQuery);
 
   const [form, setForm] = useState<FormState>({
+    categorySlug: "",
     productSlug: search.product ?? "",
     companyName: "",
     quantity: "",
