@@ -4,7 +4,7 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { uploadImages } from "@/lib/upload";
+import { imageSrc, uploadImages } from "@/lib/upload";
 
 interface ImageUploaderProps {
   value: string[];
@@ -61,7 +61,7 @@ export function ImageUploader({
               key={url + index}
               className="relative size-24 overflow-hidden rounded-md border border-border bg-secondary"
             >
-              <img src={url} alt="" className="size-full object-cover" />
+              <img src={imageSrc(url) ?? ""} alt="" className="size-full object-cover" />
               {multiple && index === 0 ? (
                 <span className="absolute inset-x-0 bottom-0 bg-navy/80 py-0.5 text-center text-[10px] font-semibold text-navy-foreground">
                   Main

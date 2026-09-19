@@ -176,7 +176,7 @@ function AdminBanners() {
                   <td className="px-4 py-3">
                     {b.image ? (
                       <img
-                        src={b.image}
+                        src={imageSrc(b.image) ?? ""}
                         alt={b.title ?? "Banner"}
                         className="h-14 w-24 rounded-md border border-border object-cover"
                       />
@@ -208,7 +208,7 @@ function AdminBanners() {
                   <td className="px-4 py-3">{b.display_order}</td>
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap justify-end gap-2">
-                      <Button size="sm" variant="outline" onClick={() => setPreview(b.image)}>
+                      <Button size="sm" variant="outline" onClick={() => setPreview(imageSrc(b.image) ?? "")}>
                         <Eye className="size-4" />
                       </Button>
                       <Button

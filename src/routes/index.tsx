@@ -138,7 +138,7 @@ function HomePage() {
                 >
                   {category.image ? (
                     <img
-                      src={category.image}
+                      src={imageSrc(category.image) ?? ""}
                       alt={category.name}
                       loading="lazy"
                       className="h-32 w-full object-cover transition-transform duration-300 group-hover:scale-105 sm:h-44"
@@ -172,7 +172,7 @@ function HomePage() {
             >
               {category.image ? (
                 <img
-                  src={category.image}
+                  src={imageSrc(category.image) ?? ""}
                   alt={category.name}
                   loading="lazy"
                   className="size-20 shrink-0 rounded-md object-cover"

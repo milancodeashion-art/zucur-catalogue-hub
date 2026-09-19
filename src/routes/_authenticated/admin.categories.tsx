@@ -161,7 +161,7 @@ function AdminCategories() {
                   <td className="px-4 py-3">
                     {c.image ? (
                       <img
-                        src={c.image}
+                        src={imageSrc(c.image) ?? ""}
                         alt={c.name}
                         className="size-12 rounded-md border border-border object-cover"
                       />

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import type { Banner } from "@/lib/catalog";
+import { imageSrc } from "@/lib/upload";
 import { cn } from "@/lib/utils";
 
 const INTERVAL = 4500;
@@ -48,7 +49,7 @@ export function HeroBannerCarousel({ banners }: { banners: Banner[] }) {
           aria-hidden={i !== index}
         >
           <img
-            src={banner.image}
+            src={imageSrc(banner.image) ?? ""}
             alt={banner.title ?? "ZUCUR MART offer"}
             loading={i === 0 ? "eager" : "lazy"}
             className="size-full object-cover"
