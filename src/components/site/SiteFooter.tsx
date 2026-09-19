@@ -152,6 +152,38 @@ export function SiteFooter() {
               </li>
             ) : null}
           </ul>
+
+          <div className="mt-5 flex items-center gap-3">
+            {SOCIALS.map((social) => (
+              <a
+                key={social.label}
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={social.label}
+                className="group/social grid size-9 place-items-center rounded-full bg-white/5 transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
+              >
+                <SocialIcon
+                  path={social.path}
+                  className="size-[18px] text-navy-foreground/70 transition-colors duration-200 group-hover/social:text-current"
+                />
+              </a>
+            ))}
+            {settings?.whatsapp_number ? (
+              <a
+                href={`https://wa.me/${digitsOnly(settings.whatsapp_number)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="WhatsApp"
+                className="group/social grid size-9 place-items-center rounded-full bg-white/5 transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
+              >
+                <SocialIcon
+                  path={WHATSAPP_PATH}
+                  className="size-[18px] text-navy-foreground/70 transition-colors duration-200 group-hover/social:text-current"
+                />
+              </a>
+            ) : null}
+          </div>
         </div>
       </div>
 
