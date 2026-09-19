@@ -94,6 +94,45 @@ function ContactPage() {
             ) : null}
           </div>
           <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
+            <h2 className="font-display text-lg font-bold text-navy">Connect with us</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Follow ZUCUR MART for stock updates, new arrivals and seasonal wholesale offers.
+            </p>
+            <div className="mt-5 flex flex-wrap items-center gap-3">
+              {SOCIALS.map((social) => (
+                <a
+                  key={social.label}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={social.label}
+                  style={{ backgroundColor: social.color }}
+                  className="group/social grid size-11 place-items-center rounded-full shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+                >
+                  <SocialIcon
+                    path={social.path}
+                    className="size-5 text-white transition-transform duration-200 group-hover/social:scale-110"
+                  />
+                </a>
+              ))}
+              {settings?.whatsapp_number ? (
+                <a
+                  href={`https://wa.me/${digitsOnly(settings.whatsapp_number)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="WhatsApp"
+                  style={{ backgroundColor: "#25D366" }}
+                  className="group/social grid size-11 place-items-center rounded-full shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+                >
+                  <SocialIcon
+                    path={WHATSAPP_PATH}
+                    className="size-5 text-white transition-transform duration-200 group-hover/social:scale-110"
+                  />
+                </a>
+              ) : null}
+            </div>
+          </div>
+          <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
             <h2 className="font-display text-lg font-bold text-navy">Need pricing for a volume?</h2>
             <p className="mt-2 text-sm text-muted-foreground">
               The fastest route to a wholesale rate is a bulk order inquiry — it captures product,
