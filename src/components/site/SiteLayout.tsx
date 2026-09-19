@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import { FloatingSocialBar } from "./FloatingSocialBar";
 import { SiteFooter } from "./SiteFooter";
 import { SiteHeader } from "./SiteHeader";
 import { VisitorGate } from "./VisitorGate";
@@ -11,6 +12,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
       <main className="flex-1">{children}</main>
       <SiteFooter />
       <VisitorGate />
+      <FloatingSocialBar />
     </div>
   );
 }
