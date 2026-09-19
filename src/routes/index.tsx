@@ -20,6 +20,7 @@ import { ProductCard } from "@/components/site/ProductCard";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { WhatsappEnquiryButton } from "@/components/site/WhatsappEnquiryButton";
 import { bannersQuery, categoriesQuery, productsQuery, settingsQuery } from "@/lib/catalog";
+import { imageSrc } from "@/lib/upload";
 
 export const Route = createFileRoute("/")({
   head: () => ({

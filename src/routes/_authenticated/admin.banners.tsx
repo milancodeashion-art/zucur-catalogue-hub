@@ -20,6 +20,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
+import { imageSrc } from "@/lib/upload";
 
 export const Route = createFileRoute("/_authenticated/admin/banners")({
   component: AdminBanners,

@@ -4,6 +4,7 @@ import { ArrowRight } from "lucide-react";
 
 import { PageHeader, SiteLayout } from "@/components/site/SiteLayout";
 import { categoriesQuery, productsQuery } from "@/lib/catalog";
+import { imageSrc } from "@/lib/upload";
 
 export const Route = createFileRoute("/categories/")({
   head: () => ({

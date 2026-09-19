@@ -1,6 +1,7 @@
 import { queryOptions } from "@tanstack/react-query";
 
 import { supabase } from "@/integrations/supabase/client";
+import { imageSrc } from "@/lib/upload";
 
 export type StockStatus = "available" | "stock_out";
 
@@ -118,7 +119,7 @@ export function productImage(product: Pick<Product, "product_images">): string |
   const sorted = [...(product.product_images ?? [])].sort(
     (a, b) => a.display_order - b.display_order,
   );
-  return sorted[0]?.image_url ?? null;
+  return imageSrc(sorted[0]?.image_url ?? null);
 }
 
 export function formatPrice(price: number | null, currency = "INR"): string {
