@@ -161,11 +161,12 @@ export function SiteFooter() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={social.label}
-                className="group/social grid size-9 place-items-center rounded-full bg-white/5 transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
+                style={{ backgroundColor: social.color }}
+                className="group/social grid size-9 place-items-center rounded-full shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
               >
                 <SocialIcon
                   path={social.path}
-                  className="size-[18px] text-navy-foreground/70 transition-colors duration-200 group-hover/social:text-current"
+                  className="size-[18px] text-white transition-transform duration-200 group-hover/social:scale-110"
                 />
               </a>
             ))}
@@ -175,11 +176,12 @@ export function SiteFooter() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="WhatsApp"
-                className="group/social grid size-9 place-items-center rounded-full bg-white/5 transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
+                style={{ backgroundColor: "#25D366" }}
+                className="group/social grid size-9 place-items-center rounded-full shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
               >
                 <SocialIcon
                   path={WHATSAPP_PATH}
-                  className="size-[18px] text-navy-foreground/70 transition-colors duration-200 group-hover/social:text-current"
+                  className="size-[18px] text-white transition-transform duration-200 group-hover/social:scale-110"
                 />
               </a>
             ) : null}
