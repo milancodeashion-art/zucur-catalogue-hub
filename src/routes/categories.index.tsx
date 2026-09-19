@@ -4,6 +4,7 @@ import { ArrowRight } from "lucide-react";
 
 import { PageHeader, SiteLayout } from "@/components/site/SiteLayout";
 import { categoriesQuery, productsQuery } from "@/lib/catalog";
+import { imageSrc } from "@/lib/upload";
 
 export const Route = createFileRoute("/categories/")({
   head: () => ({
@@ -49,7 +50,7 @@ function CategoriesPage() {
               >
                 {category.image ? (
                   <img
-                    src={category.image}
+                    src={imageSrc(category.image) ?? ""}
                     alt={category.name}
                     loading="lazy"
                     className="aspect-16/9 w-full object-cover transition-transform duration-300 group-hover:scale-105"

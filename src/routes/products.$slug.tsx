@@ -10,6 +10,7 @@ import { SiteLayout } from "@/components/site/SiteLayout";
 import { WhatsappEnquiryButton } from "@/components/site/WhatsappEnquiryButton";
 import { PriceTag } from "@/components/site/PriceTag";
 import { productQuery, productsQuery, settingsQuery } from "@/lib/catalog";
+import { imageSrc } from "@/lib/upload";
 
 export const Route = createFileRoute("/products/$slug")({
   head: () => ({
@@ -85,7 +86,7 @@ function ProductDetailPage() {
             <div className="overflow-hidden rounded-lg border border-border bg-card">
               {images[activeImage] ? (
                 <img
-                  src={images[activeImage].image_url}
+                  src={imageSrc(images[activeImage].image_url) ?? ""}
                   alt={product.name}
                   className="aspect-4/3 w-full object-cover"
                 />
@@ -107,7 +108,7 @@ function ProductDetailPage() {
                     }`}
                     aria-label={`View image ${index + 1}`}
                   >
-                    <img src={image.image_url} alt="" className="size-full object-cover" />
+                    <img src={imageSrc(image.image_url) ?? ""} alt="" className="size-full object-cover" />
                   </button>
                 ))}
               </div>

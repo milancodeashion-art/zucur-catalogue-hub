@@ -19,6 +19,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
+import { imageSrc } from "@/lib/upload";
 
 export const Route = createFileRoute("/_authenticated/admin/categories")({
   component: AdminCategories,
@@ -161,7 +162,7 @@ function AdminCategories() {
                   <td className="px-4 py-3">
                     {c.image ? (
                       <img
-                        src={c.image}
+                        src={imageSrc(c.image) ?? ""}
                         alt={c.name}
                         className="size-12 rounded-md border border-border object-cover"
                       />
