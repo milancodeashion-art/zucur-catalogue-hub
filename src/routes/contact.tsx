@@ -1,4 +1,4 @@
-import { seoHead } from "@/lib/seo";
+import { GOOGLE_BUSINESS_PROFILE, seoHead } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Clock, Mail, MapPin, Phone } from "lucide-react";
