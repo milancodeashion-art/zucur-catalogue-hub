@@ -20,25 +20,18 @@ import { ProductCard } from "@/components/site/ProductCard";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { WhatsappEnquiryButton } from "@/components/site/WhatsappEnquiryButton";
 import { bannersQuery, categoriesQuery, productsQuery, settingsQuery } from "@/lib/catalog";
+import { seoHead } from "@/lib/seo";
 import { imageSrc } from "@/lib/upload";
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "ZUCUR MART Surat — Wholesale Supplier & Bulk Orders" },
-      {
-        name: "description",
-        content:
-          "Wholesale supplier in Surat, Gujarat for packaging, hygiene, disposables, stationery and kitchenware. Compare MOQ, wholesale rates and send bulk orders on WhatsApp.",
-      },
-      { property: "og:title", content: "ZUCUR MART Surat — B2B Wholesale Supplier" },
-      {
-        property: "og:description",
-        content:
-          "Browse wholesale rates, MOQ and stock availability from ZUCUR MART in Surat. Enquire on WhatsApp or submit a bulk order inquiry.",
-      },
-    ],
-  }),
+  staticData: { sitemap: true },
+  head: () =>
+    seoHead({
+      title: "Zucur Mart | B2B Wholesale Supplier in Surat, Gujarat",
+      description:
+        "Zucur Mart is a B2B wholesale supplier in Surat offering bulk products, household essentials, bathroom, kitchen, cleaning, tools, hardware, bags, home decor and more for retailers, distributors and businesses.",
+      path: "/",
+    }),
   component: HomePage,
 });
 
