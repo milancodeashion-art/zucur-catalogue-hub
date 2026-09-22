@@ -1,3 +1,4 @@
+import { seoHead } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Clock, Mail, MapPin, Phone } from "lucide-react";
@@ -44,21 +45,14 @@ function SocialIcon({ path, className }: { path: string; className: string }) {
 }
 
 export const Route = createFileRoute("/contact")({
-  head: () => ({
-    meta: [
-      { title: "Contact ZUCUR MART — Wholesale Desk" },
-      {
-        name: "description",
-        content:
-          "Contact the ZUCUR MART wholesale desk by phone, email or WhatsApp for bulk pricing, stock availability and dispatch queries.",
-      },
-      { property: "og:title", content: "Contact ZUCUR MART" },
-      {
-        property: "og:description",
-        content: "Reach our wholesale desk for bulk pricing and stock availability.",
-      },
-    ],
-  }),
+  staticData: { sitemap: true },
+  head: () =>
+    seoHead({
+      title: "Contact Zucur Mart | B2B Wholesale Supplier in Surat",
+      description:
+        "Contact the Zucur Mart wholesale desk in Yogichowk, Surat, Gujarat for bulk pricing, minimum order quantities and dispatch details across India.",
+      path: "/contact",
+    }),
   component: ContactPage,
 });
 

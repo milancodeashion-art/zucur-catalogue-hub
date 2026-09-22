@@ -1,3 +1,4 @@
+import { seoHead } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowRight } from "lucide-react";
@@ -7,21 +8,14 @@ import { categoriesQuery, productsQuery } from "@/lib/catalog";
 import { imageSrc } from "@/lib/upload";
 
 export const Route = createFileRoute("/categories/")({
-  head: () => ({
-    meta: [
-      { title: "Wholesale Categories — ZUCUR MART" },
-      {
-        name: "description",
-        content:
-          "Explore ZUCUR MART wholesale categories: packaging, cleaning and hygiene, disposables, office stationery, kitchenware and personal care.",
-      },
-      { property: "og:title", content: "Wholesale Categories — ZUCUR MART" },
-      {
-        property: "og:description",
-        content: "Browse bulk supply categories with MOQ and wholesale rates.",
-      },
-    ],
-  }),
+  staticData: { sitemap: true },
+  head: () =>
+    seoHead({
+      title: "Wholesale Product Categories | Zucur Mart",
+      description:
+        "Browse Zucur Mart wholesale categories including bathroom products, kitchen and kitchenware, cleaning supplies, household essentials, tools and hardware, bags, home decor, stationery and packaging.",
+      path: "/categories",
+    }),
   component: CategoriesPage,
 });
 

@@ -1,23 +1,17 @@
+import { seoHead } from "@/lib/seo";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { PageHeader, SiteLayout } from "@/components/site/SiteLayout";
 
 export const Route = createFileRoute("/terms")({
-  head: () => ({
-    meta: [
-      { title: "Terms & Conditions — ZUCUR MART Wholesale" },
-      {
-        name: "description",
-        content:
-          "Terms for using the ZUCUR MART wholesale catalogue: indicative pricing, minimum order quantities, quotations and order confirmation.",
-      },
-      { property: "og:title", content: "Terms & Conditions — ZUCUR MART" },
-      {
-        property: "og:description",
-        content: "Wholesale catalogue terms, MOQ rules and quotation process.",
-      },
-    ],
-  }),
+  staticData: { sitemap: true },
+  head: () =>
+    seoHead({
+      title: "Terms & Conditions | Zucur Mart Wholesale",
+      description:
+        "Terms and conditions for wholesale enquiries, quotations and bulk orders placed with Zucur Mart in Surat, Gujarat.",
+      path: "/terms",
+    }),
   component: TermsPage,
 });
 

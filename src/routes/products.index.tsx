@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { seoHead } from "@/lib/seo";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Search } from "lucide-react";
@@ -30,21 +31,14 @@ export const Route = createFileRoute("/products/")({
         : undefined;
     return { ...(q ? { q } : {}), ...(category ? { category } : {}) };
   },
-  head: () => ({
-    meta: [
-      { title: "All Wholesale Products — ZUCUR MART" },
-      {
-        name: "description",
-        content:
-          "Search the full ZUCUR MART wholesale catalogue. Filter by category and availability, sort by price or newest, and check MOQ on every product.",
-      },
-      { property: "og:title", content: "All Wholesale Products — ZUCUR MART" },
-      {
-        property: "og:description",
-        content: "Wholesale rates, minimum order quantities and live stock status.",
-      },
-    ],
-  }),
+  staticData: { sitemap: true },
+  head: () =>
+    seoHead({
+      title: "All Wholesale Products | Zucur Mart B2B Catalogue",
+      description:
+        "Search the Zucur Mart wholesale catalogue: bulk household, bathroom, kitchen, cleaning, hardware, bags and stationery products with SKU, wholesale price, MOQ and stock availability.",
+      path: "/products",
+    }),
   component: ProductsPage,
 });
 

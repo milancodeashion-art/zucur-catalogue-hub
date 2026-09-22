@@ -1,3 +1,4 @@
+import { seoHead } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Building2, Handshake, PackageCheck, Users } from "lucide-react";
 
@@ -6,21 +7,14 @@ import { PageHeader, SiteLayout } from "@/components/site/SiteLayout";
 import { WhatsappEnquiryButton } from "@/components/site/WhatsappEnquiryButton";
 
 export const Route = createFileRoute("/about")({
-  head: () => ({
-    meta: [
-      { title: "About ZUCUR MART — Wholesale Supply House" },
-      {
-        name: "description",
-        content:
-          "ZUCUR MART is a B2B wholesale supplier of packaging, hygiene, disposables, stationery and kitchenware for retailers, distributors, hotels and institutions.",
-      },
-      { property: "og:title", content: "About ZUCUR MART" },
-      {
-        property: "og:description",
-        content: "A wholesale-only supply house serving businesses across India.",
-      },
-    ],
-  }),
+  staticData: { sitemap: true },
+  head: () =>
+    seoHead({
+      title: "About Zucur Mart | B2B Wholesale Supplier in Surat",
+      description:
+        "Zucur Mart is a B2B wholesale supplier based in Yogichowk, Surat, Gujarat, supplying bulk household, bathroom, kitchen, cleaning, hardware and packaging products to retailers, distributors, hotels and institutions.",
+      path: "/about",
+    }),
   component: AboutPage,
 });
 
