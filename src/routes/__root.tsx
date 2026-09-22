@@ -119,28 +119,24 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  staticData: { sitemap: false },
   head: () => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "ZUCUR MART Surat — B2B Wholesale Supplier & Bulk Catalogue" },
+      { title: "Zucur Mart | B2B Wholesale Supplier in Surat, Gujarat" },
       {
         name: "description",
         content:
-          "ZUCUR MART is a Surat, Gujarat B2B wholesale supplier for packaging, hygiene, disposables, stationery and kitchenware with MOQ-based bulk pricing.",
+          "Zucur Mart is a B2B wholesale supplier in Yogichowk, Surat, Gujarat supplying bulk household, bathroom, kitchen, cleaning, hardware and packaging products to retailers, distributors and businesses.",
       },
-      { name: "author", content: "ZUCUR MART" },
-      { name: "keywords", content: "wholesale supplier Surat, bulk products Surat, packaging supplier Gujarat, ZUCUR MART" },
+      { name: "author", content: "Zucur Mart" },
       { name: "telephone", content: "+91 6359061362" },
       { name: "email", content: "info@zucur.com" },
       { name: "geo.region", content: "IN-GJ" },
       { name: "geo.placename", content: "Surat" },
-      { property: "og:title", content: "ZUCUR MART Surat — B2B Wholesale Supplier" },
-      {
-        property: "og:description",
-        content: "Wholesale rates, MOQ and bulk order inquiries for business buyers in Surat and across India.",
-      },
       { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "Zucur Mart" },
       { property: "og:locale", content: "en_IN" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -167,6 +163,7 @@ function RootShell({ children }: { children: ReactNode }) {
       <head>
         <HeadContent />
         <script type="application/ld+json">{JSON.stringify(BUSINESS_SCHEMA)}</script>
+        <script type="application/ld+json">{JSON.stringify(WEBSITE_SCHEMA)}</script>
       </head>
       <body>
         {children}
