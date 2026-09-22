@@ -51,9 +51,11 @@ export function SiteHeader() {
 
       <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3">
         <Link to="/" className="flex shrink-0 items-center gap-2">
-          <span className="grid size-9 place-items-center rounded-md bg-navy font-display text-sm font-extrabold text-gold">
-            ZM
-          </span>
+          <img
+            src="/favicon.ico"
+            alt="ZUCUR MART logo"
+            className="h-12 w-auto object-contain"
+          />
           <span className="leading-none">
             <span className="block font-display text-lg font-extrabold tracking-tight text-navy">
               ZUCUR MART

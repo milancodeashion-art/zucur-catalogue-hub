@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import zucurLogo from "@/assets/zucur_logo.png";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/auth")({
@@ -80,8 +81,8 @@ function AuthPage() {
     <div className="flex min-h-screen items-center justify-center bg-navy px-4 py-12">
       <div className="w-full max-w-md rounded-xl bg-card p-8 shadow-lg">
         <Link to="/" className="flex items-center gap-2">
-          <span className="grid size-9 place-items-center rounded-md bg-navy font-display text-sm font-extrabold text-gold">
-            ZM
+          <span className="grid size-9 place-items-center overflow-hidden rounded-md bg-white p-0">
+            <img src={zucurLogo} alt="ZUCUR MART logo" className="h-full w-full rounded-[6px] object-contain" />
           </span>
           <span className="font-display text-lg font-extrabold text-navy">ZUCUR MART</span>
         </Link>

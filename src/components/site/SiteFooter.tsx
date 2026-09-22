@@ -1,7 +1,8 @@
-import { Link } from "@tanstack/react-router";
+  import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Mail, MapPin, Phone, Clock } from "lucide-react";
 
+import zucurLogo from "@/assets/zucur_logo.png";
 import { categoriesQuery, settingsQuery } from "@/lib/catalog";
 
 function digitsOnly(value: string): string {
@@ -49,8 +50,12 @@ export function SiteFooter() {
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:grid-cols-2 lg:grid-cols-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="grid size-9 place-items-center rounded-md bg-gold font-display text-sm font-extrabold text-gold-foreground">
-              ZM
+            <span className="grid size-9 place-items-center overflow-hidden rounded-md bg-white p-0">
+              <img
+                src={zucurLogo}
+                alt="ZUCUR MART logo"
+                className="h-full w-full rounded-[6px] object-contain"
+              />
             </span>
             <span className="font-display text-lg font-extrabold">ZUCUR MART</span>
           </div>

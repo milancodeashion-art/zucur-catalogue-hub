@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import zucurLogo from "@/assets/zucur_logo.png";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -84,8 +85,8 @@ function AdminLayout() {
       <header className="sticky top-0 z-40 border-b border-border bg-navy text-navy-foreground">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
           <Link to="/admin" className="flex items-center gap-2">
-            <span className="grid size-8 place-items-center rounded-md bg-gold font-display text-xs font-extrabold text-navy">
-              ZM
+            <span className="grid size-8 place-items-center overflow-hidden rounded-md bg-white p-0">
+              <img src={zucurLogo} alt="ZUCUR MART logo" className="h-full w-full rounded-[6px] object-contain" />
             </span>
             <span className="font-display text-sm font-extrabold">ZUCUR MART Admin</span>
           </Link>
