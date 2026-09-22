@@ -23,7 +23,7 @@ export function ProductCard({ product }: { product: Product }) {
         {image ? (
           <img
             src={image}
-            alt={product.name}
+            alt={`${product.name} — wholesale ${product.category?.name ?? "product"} from Zucur Mart`}
             loading="lazy"
             className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
           />

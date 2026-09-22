@@ -73,7 +73,16 @@ function CategoryDetailPage() {
         title={category?.name ?? "Category"}
         subtitle={category?.description ?? undefined}
       />
-      <div className="mx-auto max-w-7xl px-4 py-12">
+      <div className="mx-auto max-w-7xl px-4 pt-6">
+        <Breadcrumbs
+          items={[
+            { name: "Home", to: "/" },
+            { name: "Categories", to: "/categories" },
+            { name: category?.name ?? "Category" },
+          ]}
+        />
+      </div>
+      <div className="mx-auto max-w-7xl px-4 pb-12 pt-6">
         {isLoading ? (
           <p className="text-sm text-muted-foreground">Loading products…</p>
         ) : items.length === 0 ? (

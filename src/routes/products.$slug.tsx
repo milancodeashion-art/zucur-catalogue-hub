@@ -153,6 +153,18 @@ function ProductDetailPage() {
   return (
     <SiteLayout>
       <div className="mx-auto max-w-7xl px-4 py-8">
+        <Breadcrumbs
+          items={[
+            { name: "Home", to: "/" },
+            { name: "Products", to: "/products" },
+            ...(product.category
+              ? [{ name: product.category.name, href: `/categories/${product.category.slug}` }]
+              : []),
+            { name: product.name },
+          ]}
+        />
+        <div className="mt-4" />
+
         <Link
           to="/products"
           className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
