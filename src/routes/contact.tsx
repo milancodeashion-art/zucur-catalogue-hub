@@ -125,6 +125,18 @@ function ContactPage() {
                 </a>
               ) : null}
             </div>
+            <p className="mt-5 text-sm text-muted-foreground">
+              Find our Yogichowk, Surat store details, directions and reviews on{" "}
+              <a
+                href={GOOGLE_BUSINESS_PROFILE}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-primary hover:underline"
+              >
+                Google
+              </a>
+              .
+            </p>
           </div>
           <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
             <h2 className="font-display text-lg font-bold text-navy">Need pricing for a volume?</h2>
