@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 const BUCKET = "catalogue";
 
 export const Route = createFileRoute("/api/public/images/$")({
+  staticData: { sitemap: false },
   server: {
     handlers: {
       GET: async ({ params }) => {

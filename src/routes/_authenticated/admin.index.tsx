@@ -5,6 +5,7 @@ import { AlertTriangle, ClipboardList, MessageCircle, Package, Users } from "luc
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/admin/")({
+  staticData: { sitemap: false },
   component: AdminDashboard,
 });
 

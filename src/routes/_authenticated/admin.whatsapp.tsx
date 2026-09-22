@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/admin/whatsapp")({
+  staticData: { sitemap: false },
   component: AdminWhatsapp,
 });
 
