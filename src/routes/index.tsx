@@ -87,12 +87,14 @@ function HomePage() {
               B2B Wholesale · No retail sales
             </p>
             <h1 className="mt-4 font-display text-4xl font-extrabold leading-tight sm:text-5xl">
-              Bulk supply, sharper margins for your business
+              B2B Wholesale Supplier for Bulk Products in Surat
             </h1>
             <p className="mt-4 max-w-xl text-sm leading-relaxed text-navy-foreground/80 sm:text-base">
-              ZUCUR MART supplies retailers, distributors, hotels, offices and institutions with
-              packaging, hygiene, disposables, stationery and kitchenware at wholesale rates. Browse
-              the catalogue, check MOQ, and send your requirement in one tap.
+              Zucur Mart is a wholesale supplier based in Yogichowk, Surat, Gujarat, supplying
+              retailers, distributors, hotels, offices and institutions with household essentials,
+              bathroom and kitchen products, cleaning supplies, tools and hardware, bags, home decor,
+              stationery and packaging at bulk rates. Browse the catalogue, check MOQ, and send your
+              requirement in one tap.
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <Button asChild size="lg">
