@@ -17,6 +17,8 @@ import zucurLogo from "@/assets/zucur_logo.png";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/admin")({
+  staticData: { sitemap: false },
+  head: () => ({ meta: [{ name: "robots", content: "noindex, nofollow" }] }),
   component: AdminLayout,
 });
 

@@ -9,25 +9,104 @@ import { ProductCard } from "@/components/site/ProductCard";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { WhatsappEnquiryButton } from "@/components/site/WhatsappEnquiryButton";
 import { PriceTag } from "@/components/site/PriceTag";
-import { productQuery, productsQuery, settingsQuery } from "@/lib/catalog";
+import { Breadcrumbs } from "@/components/site/Breadcrumbs";
+import {
+  effectivePrice,
+  formatPrice,
+  productImage,
+  productQuery,
+  productsQuery,
+  settingsQuery,
+} from "@/lib/catalog";
+import { breadcrumbSchema, canonicalUrl, seoHead } from "@/lib/seo";
 import { imageSrc } from "@/lib/upload";
 
 export const Route = createFileRoute("/products/$slug")({
-  head: () => ({
-    meta: [
-      { title: "Wholesale Product Details — ZUCUR MART" },
-      {
-        name: "description",
-        content:
-          "Product specifications, SKU, wholesale price, minimum order quantity and availability. Enquire on WhatsApp or raise a bulk order inquiry.",
-      },
-      { property: "og:title", content: "Wholesale Product Details — ZUCUR MART" },
-      {
-        property: "og:description",
-        content: "SKU, wholesale price, MOQ and availability for bulk buyers.",
-      },
-    ],
+  staticData: { sitemap: true },
+  loader: async ({ params, context }) => ({
+    product: await context.queryClient.ensureQueryData(productQuery(params.slug)),
   }),
+  head: ({ params, loaderData }) => {
+    const path = `/products/${params.slug}`;
+    const product = loaderData?.product ?? null;
+
+    if (!product) {
+      return seoHead({
+        title: "Product not available | Zucur Mart",
+        description: "This wholesale listing is no longer available in the Zucur Mart catalogue.",
+        path,
+        noindex: true,
+      });
+    }
+
+    const price = effectivePrice(product);
+    const description = [
+      `${product.name} (SKU ${product.sku}) at wholesale rates from Zucur Mart, a B2B wholesale supplier in Surat.`,
+      price !== null ? `Wholesale price ${formatPrice(price)} per unit.` : "Wholesale price on request.",
+      `Minimum order quantity ${product.moq}.`,
+      product.stock_status === "available" ? "In stock for bulk orders." : "Currently out of stock.",
+    ].join(" ");
+    const image = productImage(product);
+    const base = seoHead({
+      title: `${product.name} | Wholesale Price & Details | Zucur Mart`,
+      description,
+      path,
+      type: "product",
+      image,
+    });
+
+    return {
+      ...base,
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            name: product.name,
+            sku: product.sku,
+            description: product.description ?? description,
+            url: canonicalUrl(path),
+            brand: { "@type": "Brand", name: "Zucur Mart" },
+            ...(image && image.startsWith("https://") ? { image: [image] } : {}),
+            ...(product.category ? { category: product.category.name } : {}),
+            ...(price !== null
+              ? {
+                  offers: {
+                    "@type": "Offer",
+                    price,
+                    priceCurrency: "INR",
+                    url: canonicalUrl(path),
+                    availability:
+                      product.stock_status === "available"
+                        ? "https://schema.org/InStock"
+                        : "https://schema.org/OutOfStock",
+                    eligibleQuantity: {
+                      "@type": "QuantitativeValue",
+                      minValue: product.moq,
+                      unitCode: "C62",
+                    },
+                  },
+                }
+              : {}),
+          }),
+        },
+        {
+          type: "application/ld+json",
+          children: JSON.stringify(
+            breadcrumbSchema([
+              { name: "Home", path: "/" },
+              { name: "Products", path: "/products" },
+              ...(product.category
+                ? [{ name: product.category.name, path: `/categories/${product.category.slug}` }]
+                : []),
+              { name: product.name, path },
+            ]),
+          ),
+        },
+      ],
+    };
+  },
   component: ProductDetailPage,
 });
 
@@ -74,6 +153,18 @@ function ProductDetailPage() {
   return (
     <SiteLayout>
       <div className="mx-auto max-w-7xl px-4 py-8">
+        <Breadcrumbs
+          items={[
+            { name: "Home", to: "/" },
+            { name: "Products", to: "/products" },
+            ...(product.category
+              ? [{ name: product.category.name, href: `/categories/${product.category.slug}` }]
+              : []),
+            { name: product.name },
+          ]}
+        />
+        <div className="mt-4" />
+
         <Link
           to="/products"
           className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"

@@ -1,23 +1,17 @@
+import { seoHead } from "@/lib/seo";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { PageHeader, SiteLayout } from "@/components/site/SiteLayout";
 
 export const Route = createFileRoute("/privacy-policy")({
-  head: () => ({
-    meta: [
-      { title: "Privacy Policy — ZUCUR MART" },
-      {
-        name: "description",
-        content:
-          "How ZUCUR MART collects and uses the business contact details shared for wholesale enquiries and bulk order quotations.",
-      },
-      { property: "og:title", content: "Privacy Policy — ZUCUR MART" },
-      {
-        property: "og:description",
-        content: "Details on how wholesale enquiry information is handled.",
-      },
-    ],
-  }),
+  staticData: { sitemap: true },
+  head: () =>
+    seoHead({
+      title: "Privacy Policy | Zucur Mart",
+      description:
+        "How Zucur Mart collects and uses the business contact details shared for wholesale enquiries and bulk order quotations.",
+      path: "/privacy-policy",
+    }),
   component: PrivacyPage,
 });
 

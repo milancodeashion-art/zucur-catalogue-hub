@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/admin/settings")({
+  staticData: { sitemap: false },
   component: AdminSettings,
 });
 

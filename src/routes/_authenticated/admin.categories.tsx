@@ -22,6 +22,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { imageSrc } from "@/lib/upload";
 
 export const Route = createFileRoute("/_authenticated/admin/categories")({
+  staticData: { sitemap: false },
   component: AdminCategories,
 });
 

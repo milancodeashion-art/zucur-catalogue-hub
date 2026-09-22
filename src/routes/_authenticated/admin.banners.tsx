@@ -23,6 +23,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { imageSrc } from "@/lib/upload";
 
 export const Route = createFileRoute("/_authenticated/admin/banners")({
+  staticData: { sitemap: false },
   component: AdminBanners,
 });
 

@@ -6,6 +6,7 @@ import { Pagination } from "@/components/admin/Pagination";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/admin/visitors")({
+  staticData: { sitemap: false },
   component: AdminVisitors,
 });
 

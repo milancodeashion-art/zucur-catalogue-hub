@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { seoHead } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { CheckCircle2, Loader2 } from "lucide-react";
@@ -30,21 +31,14 @@ export const Route = createFileRoute("/bulk-order-inquiry")({
         : undefined;
     return product ? { product } : {};
   },
-  head: () => ({
-    meta: [
-      { title: "Bulk Order Inquiry — ZUCUR MART Wholesale" },
-      {
-        name: "description",
-        content:
-          "Send your bulk requirement to ZUCUR MART: product, quantity, company and delivery city. Wholesale quotations within one working day.",
-      },
-      { property: "og:title", content: "Bulk Order Inquiry — ZUCUR MART" },
-      {
-        property: "og:description",
-        content: "Share quantity and delivery details to receive a wholesale quotation.",
-      },
-    ],
-  }),
+  staticData: { sitemap: true },
+  head: () =>
+    seoHead({
+      title: "Bulk Order Inquiry | Zucur Mart B2B Wholesale",
+      description:
+        "Send a bulk order inquiry to Zucur Mart, a B2B wholesale supplier in Surat. Share your category, product and quantity to receive wholesale rates and dispatch timelines.",
+      path: "/bulk-order-inquiry",
+    }),
   component: BulkOrderInquiryPage,
 });
 

@@ -2,26 +2,62 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
+import { Breadcrumbs } from "@/components/site/Breadcrumbs";
 import { ProductCard } from "@/components/site/ProductCard";
 import { PageHeader, SiteLayout } from "@/components/site/SiteLayout";
 import { categoriesQuery, productsQuery } from "@/lib/catalog";
+import { breadcrumbSchema, seoHead } from "@/lib/seo";
+import { imageSrc } from "@/lib/upload";
 
 export const Route = createFileRoute("/categories/$slug")({
-  head: () => ({
-    meta: [
-      { title: "Category — Wholesale Products | ZUCUR MART" },
-      {
-        name: "description",
-        content:
-          "Wholesale products in this category with SKU, price, minimum order quantity and stock availability.",
-      },
-      { property: "og:title", content: "Wholesale Category — ZUCUR MART" },
-      {
-        property: "og:description",
-        content: "Bulk-rate products with MOQ and availability at ZUCUR MART.",
-      },
-    ],
-  }),
+  staticData: { sitemap: true },
+  loader: async ({ params, context }) => {
+    const [categories] = await Promise.all([
+      context.queryClient.ensureQueryData(categoriesQuery),
+      context.queryClient.ensureQueryData(productsQuery),
+    ]);
+    return { category: categories.find((item) => item.slug === params.slug) ?? null };
+  },
+  head: ({ params, loaderData }) => {
+    const path = `/categories/${params.slug}`;
+    const category = loaderData?.category ?? null;
+
+    if (!category) {
+      return seoHead({
+        title: "Category not available | Zucur Mart",
+        description: "This wholesale category is no longer listed in the Zucur Mart catalogue.",
+        path,
+        noindex: true,
+      });
+    }
+
+    const description =
+      category.description ??
+      `${category.name} at wholesale rates from Zucur Mart, a B2B wholesale supplier in Yogichowk, Surat. Compare SKUs, wholesale prices, minimum order quantities and stock availability for bulk orders.`;
+
+    const base = seoHead({
+      title: `${category.name} | Zucur Mart Wholesale`,
+      description,
+      path,
+      image: imageSrc(category.image),
+    });
+
+    return {
+      ...base,
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify(
+            breadcrumbSchema([
+              { name: "Home", path: "/" },
+              { name: "Categories", path: "/categories" },
+              { name: category.name, path },
+            ]),
+          ),
+        },
+      ],
+    };
+  },
   component: CategoryDetailPage,
 });
 
@@ -40,7 +76,16 @@ function CategoryDetailPage() {
         title={category?.name ?? "Category"}
         subtitle={category?.description ?? undefined}
       />
-      <div className="mx-auto max-w-7xl px-4 py-12">
+      <div className="mx-auto max-w-7xl px-4 pt-6">
+        <Breadcrumbs
+          items={[
+            { name: "Home", to: "/" },
+            { name: "Categories", to: "/categories" },
+            { name: category?.name ?? "Category" },
+          ]}
+        />
+      </div>
+      <div className="mx-auto max-w-7xl px-4 pb-12 pt-6">
         {isLoading ? (
           <p className="text-sm text-muted-foreground">Loading products…</p>
         ) : items.length === 0 ? (

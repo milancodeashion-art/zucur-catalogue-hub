@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { seoHead } from "@/lib/seo";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Loader2, LockKeyhole } from "lucide-react";
 import { toast } from "sonner";
@@ -10,18 +11,15 @@ import zucurLogo from "@/assets/zucur_logo.png";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/auth")({
-  head: () => ({
-    meta: [
-      { title: "Admin Sign In — ZUCUR MART" },
-      {
-        name: "description",
-        content: "Secure sign-in for the ZUCUR MART wholesale administration portal.",
-      },
-      { property: "og:title", content: "Admin Sign In — ZUCUR MART" },
-      { property: "og:description", content: "Staff access to the ZUCUR MART admin portal." },
-      { name: "robots", content: "noindex" },
-    ],
-  }),
+  staticData: { sitemap: false },
+  head: () =>
+    seoHead({
+      title: "Admin Sign In | Zucur Mart",
+      description:
+        "Secure sign-in for the Zucur Mart wholesale administration portal.",
+      path: "/auth",
+    noindex: true,
+    }),
   component: AuthPage,
 });
 
