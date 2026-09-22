@@ -32,6 +32,10 @@ export const Route = createFileRoute("/products/")({
     return { ...(q ? { q } : {}), ...(category ? { category } : {}) };
   },
   staticData: { sitemap: true },
+  loader: async ({ context }) => {
+    await context.queryClient.ensureQueryData(categoriesQuery);
+    await context.queryClient.ensureQueryData(productsQuery);
+  },
   head: () =>
     seoHead({
       title: "All Wholesale Products | Zucur Mart B2B Catalogue",

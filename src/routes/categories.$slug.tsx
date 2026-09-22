@@ -12,7 +12,10 @@ import { imageSrc } from "@/lib/upload";
 export const Route = createFileRoute("/categories/$slug")({
   staticData: { sitemap: true },
   loader: async ({ params, context }) => {
-    const categories = await context.queryClient.ensureQueryData(categoriesQuery);
+    const [categories] = await Promise.all([
+      context.queryClient.ensureQueryData(categoriesQuery),
+      context.queryClient.ensureQueryData(productsQuery),
+    ]);
     return { category: categories.find((item) => item.slug === params.slug) ?? null };
   },
   head: ({ params, loaderData }) => {

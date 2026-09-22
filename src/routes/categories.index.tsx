@@ -9,6 +9,10 @@ import { imageSrc } from "@/lib/upload";
 
 export const Route = createFileRoute("/categories/")({
   staticData: { sitemap: true },
+  loader: async ({ context }) => {
+    await context.queryClient.ensureQueryData(categoriesQuery);
+    await context.queryClient.ensureQueryData(productsQuery);
+  },
   head: () =>
     seoHead({
       title: "Wholesale Product Categories | Zucur Mart",
