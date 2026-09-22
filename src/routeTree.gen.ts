@@ -16,6 +16,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as BulkOrderInquiryRouteImport } from './routes/bulk-order-inquiry'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as CategoriesIndexRouteImport } from './routes/categories.index'
@@ -64,6 +65,11 @@ const ContactRoute = ContactRouteImport.update({
 const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
   id: '/privacy-policy',
   path: '/privacy-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TermsRoute = TermsRouteImport.update({
@@ -156,6 +162,7 @@ export interface FileRoutesByFullPath {
   '/bulk-order-inquiry': typeof BulkOrderInquiryRoute
   '/contact': typeof ContactRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/categories/$slug': typeof CategoriesSlugRoute
@@ -179,6 +186,7 @@ export interface FileRoutesByTo {
   '/bulk-order-inquiry': typeof BulkOrderInquiryRoute
   '/contact': typeof ContactRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/products/$slug': typeof ProductsSlugRoute
@@ -203,6 +211,7 @@ export interface FileRoutesById {
   '/bulk-order-inquiry': typeof BulkOrderInquiryRoute
   '/contact': typeof ContactRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/categories/$slug': typeof CategoriesSlugRoute
@@ -228,6 +237,7 @@ export interface FileRouteTypes {
     | '/bulk-order-inquiry'
     | '/contact'
     | '/privacy-policy'
+    | '/sitemap.xml'
     | '/terms'
     | '/admin'
     | '/categories/$slug'
@@ -251,6 +261,7 @@ export interface FileRouteTypes {
     | '/bulk-order-inquiry'
     | '/contact'
     | '/privacy-policy'
+    | '/sitemap.xml'
     | '/terms'
     | '/categories/$slug'
     | '/products/$slug'
@@ -274,6 +285,7 @@ export interface FileRouteTypes {
     | '/bulk-order-inquiry'
     | '/contact'
     | '/privacy-policy'
+    | '/sitemap.xml'
     | '/terms'
     | '/_authenticated/admin'
     | '/categories/$slug'
@@ -299,6 +311,7 @@ export interface RootRouteChildren {
   BulkOrderInquiryRoute: typeof BulkOrderInquiryRoute
   ContactRoute: typeof ContactRoute
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   CategoriesSlugRoute: typeof CategoriesSlugRoute
   ProductsSlugRoute: typeof ProductsSlugRoute
@@ -356,6 +369,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy-policy'
       fullPath: '/privacy-policy'
       preLoaderRoute: typeof PrivacyPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/terms': {
@@ -510,6 +530,7 @@ const rootRouteChildren: RootRouteChildren = {
   BulkOrderInquiryRoute: BulkOrderInquiryRoute,
   ContactRoute: ContactRoute,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   CategoriesSlugRoute: CategoriesSlugRoute,
   ProductsSlugRoute: ProductsSlugRoute,

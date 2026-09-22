@@ -14,16 +14,19 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 import { VisitorProvider } from "@/lib/visitor";
 import { supabase } from "@/integrations/supabase/client";
+import { GOOGLE_BUSINESS_PROFILE, SITE_URL, SOCIAL_PROFILES } from "@/lib/seo";
 
 const BUSINESS_SCHEMA = {
   "@context": "https://schema.org",
-  "@type": "WholesaleStore",
-  name: "ZUCUR MART",
-  url: "/",
+  "@type": ["WholesaleStore", "LocalBusiness", "Organization"],
+  "@id": `${SITE_URL}/#business`,
+  name: "Zucur Mart",
+  alternateName: ["ZUCUR MART", "ZucurMart", "Zucur"],
+  url: SITE_URL,
   email: "info@zucur.com",
   telephone: "+91 6359061362",
   description:
-    "ZUCUR MART is a wholesale supplier in Surat, Gujarat offering packaging, hygiene, disposables, stationery and kitchenware for business buyers.",
+    "Zucur Mart is a B2B wholesale supplier in Yogichowk, Surat, Gujarat offering bulk household, bathroom, kitchen, cleaning, hardware, bags, home decor, stationery and packaging products for retailers, distributors, hotels and institutions.",
   address: {
     "@type": "PostalAddress",
     streetAddress: "38 The Galleria, Near Anupam Business Hub, Yogi Chowk Ground, Chikuwadi, Varachha",
@@ -34,6 +37,25 @@ const BUSINESS_SCHEMA = {
   },
   openingHours: "Mo-Sa 09:00-18:00",
   areaServed: "India",
+  sameAs: [...SOCIAL_PROFILES, "https://wa.me/919313403837", GOOGLE_BUSINESS_PROFILE],
+};
+
+const WEBSITE_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": `${SITE_URL}/#website`,
+  name: "Zucur Mart",
+  url: SITE_URL,
+  publisher: { "@id": `${SITE_URL}/#business` },
+  inLanguage: "en-IN",
+  potentialAction: {
+    "@type": "SearchAction",
+    target: {
+      "@type": "EntryPoint",
+      urlTemplate: `${SITE_URL}/products?q={search_term_string}`,
+    },
+    "query-input": "required name=search_term_string",
+  },
 };
 
 function NotFoundComponent() {
