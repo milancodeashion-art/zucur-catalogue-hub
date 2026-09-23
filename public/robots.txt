@@ -17,4 +17,4 @@ Disallow: /admin/
 Disallow: /auth
 Disallow: /api/
 
-Sitemap: https://zucurmart.in/sitemap.xml
+Sitemap: https://zucur-catalogue-hub.lovable.app/sitemap.xml
