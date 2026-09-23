@@ -142,6 +142,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
+      {
+        name: "google-site-verification",
+        content: "9DItqRt9AV-dw6aJjcvatntgtvVst4wPBPCEQnWbtFE",
+      },
       { name: "author", content: "Zucur Mart" },
       { name: "telephone", content: "+91 6359061362" },
       { name: "email", content: "info@zucur.com" },
