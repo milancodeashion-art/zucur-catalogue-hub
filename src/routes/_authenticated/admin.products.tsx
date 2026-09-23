@@ -133,7 +133,8 @@ function AdminProducts() {
   const save = useMutation({
     mutationFn: async (input: Draft) => {
       const price = input.price.trim() === "" ? null : Number(input.price);
-      const discounted = input.discounted_price.trim() === "" ? null : Number(input.discounted_price);
+      const discounted =
+        input.discounted_price.trim() === "" ? null : Number(input.discounted_price);
       const payload = {
         name: input.name.trim(),
         slug: input.slug.trim() || slugify(input.name),
@@ -180,7 +181,8 @@ function AdminProducts() {
       void queryClient.invalidateQueries({ queryKey: ["admin-products"] });
       void queryClient.invalidateQueries({ queryKey: ["products"] });
     },
-    onError: () => toast.error("Could not save the product. Please check the details and try again."),
+    onError: () =>
+      toast.error("Could not save the product. Please check the details and try again."),
   });
 
   const remove = useMutation({
@@ -273,7 +275,7 @@ function AdminProducts() {
                     {p.stock_status === "stock_out" ? "Stock out" : "Available"}
                   </td>
                   <td className="px-4 py-3 text-xs text-muted-foreground">
-                    {[p.featured ? "Featured" : null, p.active ? "Active" : "Inactive"]
+                    {[p.featured ? "Best sellers" : null, p.active ? "Active" : "Inactive"]
                       .filter(Boolean)
                       .join(" · ")}
                   </td>
@@ -295,7 +297,8 @@ function AdminProducts() {
                             discounted_price:
                               p.discounted_price === null ? "" : String(p.discounted_price),
                             moq: String(p.moq),
-                            stock_status: p.stock_status === "stock_out" ? "stock_out" : "available",
+                            stock_status:
+                              p.stock_status === "stock_out" ? "stock_out" : "available",
                             featured: p.featured,
                             active: p.active,
                             images: [...(p.product_images ?? [])]
@@ -476,7 +479,7 @@ function AdminProducts() {
                   checked={draft.featured}
                   onCheckedChange={(v) => setDraft({ ...draft, featured: v })}
                 />
-                <Label htmlFor="p-featured">Featured</Label>
+                <Label htmlFor="p-featured">Best sellers</Label>
               </div>
               <div className="flex items-center gap-3">
                 <Switch

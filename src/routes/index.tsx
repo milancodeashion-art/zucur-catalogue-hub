@@ -92,9 +92,9 @@ function HomePage() {
             <p className="mt-4 max-w-xl text-sm leading-relaxed text-navy-foreground/80 sm:text-base">
               Zucur Mart is a wholesale supplier based in Yogichowk, Surat, Gujarat, supplying
               retailers, distributors, hotels, offices and institutions with household essentials,
-              bathroom and kitchen products, cleaning supplies, tools and hardware, bags, home decor,
-              stationery and packaging at bulk rates. Browse the catalogue, check MOQ, and send your
-              requirement in one tap.
+              bathroom and kitchen products, cleaning supplies, tools and hardware, bags, home
+              decor, stationery and packaging at bulk rates. Browse the catalogue, check MOQ, and
+              send your requirement in one tap.
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <Button asChild size="lg">
@@ -102,17 +102,26 @@ function HomePage() {
                   Browse Catalogue <ArrowRight className="size-4" />
                 </Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="border-gold/60 bg-transparent text-gold hover:bg-gold hover:text-gold-foreground">
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="border-gold/60 bg-transparent text-gold hover:bg-gold hover:text-gold-foreground"
+              >
                 <Link to="/bulk-order-inquiry">Bulk Order Inquiry</Link>
               </Button>
             </div>
             <dl className="mt-10 grid max-w-lg grid-cols-3 gap-4 border-t border-navy-foreground/15 pt-6 text-center">
               <div>
-                <dt className="font-display text-2xl font-extrabold text-gold">{products.length}+</dt>
+                <dt className="font-display text-2xl font-extrabold text-gold">
+                  {products.length}+
+                </dt>
                 <dd className="text-xs text-navy-foreground/70">Wholesale SKUs</dd>
               </div>
               <div>
-                <dt className="font-display text-2xl font-extrabold text-gold">{categories.length}</dt>
+                <dt className="font-display text-2xl font-extrabold text-gold">
+                  {categories.length}
+                </dt>
                 <dd className="text-xs text-navy-foreground/70">Supply categories</dd>
               </div>
               <div>
@@ -190,8 +199,8 @@ function HomePage() {
       <section className="bg-card py-14">
         <div className="mx-auto max-w-7xl px-4">
           <SectionHeading
-            eyebrow="Best sellers"
-            title="Featured products"
+            eyebrow="Featured products"
+            title="Best sellers"
             action={{ to: "/products", label: "View all products" }}
           />
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -206,7 +215,10 @@ function HomePage() {
         <SectionHeading eyebrow="Why ZUCUR MART" title="Built for wholesale buyers" />
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {BENEFITS.map((benefit) => (
-            <div key={benefit.title} className="rounded-lg border border-border bg-card p-5 shadow-sm">
+            <div
+              key={benefit.title}
+              className="rounded-lg border border-border bg-card p-5 shadow-sm"
+            >
               <span className="grid size-10 place-items-center rounded-md bg-primary/10 text-primary">
                 <benefit.icon className="size-5" />
               </span>
@@ -228,8 +240,8 @@ function HomePage() {
                 Send your quantity, get a wholesale quotation
               </h2>
               <p className="mt-2 max-w-2xl text-sm text-navy-foreground/75">
-                Share the products, quantities and delivery city. Our team responds with slab pricing
-                and dispatch timelines within one working day.
+                Share the products, quantities and delivery city. Our team responds with slab
+                pricing and dispatch timelines within one working day.
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
@@ -266,7 +278,8 @@ function HomePage() {
                 Faster answers on WhatsApp
               </h2>
               <p className="text-sm text-muted-foreground">
-                Product availability, slab rates and dispatch updates — chat with our wholesale desk.
+                Product availability, slab rates and dispatch updates — chat with our wholesale
+                desk.
               </p>
             </div>
           </div>
@@ -278,9 +291,9 @@ function HomePage() {
         <div>
           <SectionHeading eyebrow="About us" title="A wholesale partner, not a marketplace" />
           <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
-            ZUCUR MART operates strictly as a business-to-business supply house. We do not sell single
-            units and there is no online checkout — every order is confirmed through a quotation so
-            pricing reflects your actual volume, packing and delivery requirement.
+            ZUCUR MART operates strictly as a business-to-business supply house. We do not sell
+            single units and there is no online checkout — every order is confirmed through a
+            quotation so pricing reflects your actual volume, packing and delivery requirement.
           </p>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
             Our buyers include kirana chains, distributors, cloud kitchens, hotels, hospitals,

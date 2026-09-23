@@ -34,7 +34,7 @@ export function ProductCard({ product }: { product: Product }) {
         )}
         {product.featured ? (
           <span className="absolute left-2 top-2 rounded bg-gold px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-gold-foreground">
-            Featured
+            Best sellers
           </span>
         ) : null}
       </Link>
@@ -51,11 +51,7 @@ export function ProductCard({ product }: { product: Product }) {
           {product.name}
         </Link>
         <p className="text-xs text-muted-foreground">SKU: {product.sku}</p>
-        <PriceTag
-          product={product}
-          currency={settings?.currency ?? "INR"}
-          className="mt-auto"
-        />
+        <PriceTag product={product} currency={settings?.currency ?? "INR"} className="mt-auto" />
         <div className="flex flex-wrap gap-1.5">
           <MoqBadge moq={product.moq} />
           <StockBadge status={product.stock_status} />
