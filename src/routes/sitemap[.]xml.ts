@@ -4,7 +4,7 @@ import { getRouterInstance } from "@tanstack/react-start";
 import { sitemapPathForLocation, sitemapStaticPaths, sitemapXML, type SitemapEntry } from "@/lib/sitemap";
 import { isSitemapRouteIncluded } from "@/lib/sitemap";
 
-const BASE_URL = "https://zucurmart.in";
+const BASE_URL = "https://zucur-catalogue-hub.lovable.app";
 
 const PRODUCT_ROUTE_ID = "/products/$slug";
 const CATEGORY_ROUTE_ID = "/categories/$slug";
