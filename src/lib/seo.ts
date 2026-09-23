@@ -3,7 +3,7 @@
  * Metadata only — no visual or behavioural changes.
  */
 
-export const SITE_URL = "https://zucurmart.in";
+export const SITE_URL = "https://zucur-catalogue-hub.lovable.app";
 export const SITE_NAME = "Zucur Mart";
 export const GOOGLE_BUSINESS_PROFILE = "https://share.google/DBOMKhPlebvtBCjoF";
 
@@ -42,7 +42,6 @@ export function seoHead(input: SeoInput) {
     { property: "og:description", content: input.description },
     { property: "og:type", content: input.type ?? "website" },
     { property: "og:url", content: url },
-    { property: "og:site_name", content: SITE_NAME },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: input.title },
     { name: "twitter:description", content: input.description },

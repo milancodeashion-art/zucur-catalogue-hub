@@ -142,21 +142,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Zucur Mart | B2B Wholesale Supplier in Surat, Gujarat" },
-      {
-        name: "description",
-        content:
-          "Zucur Mart is a B2B wholesale supplier in Yogichowk, Surat, Gujarat supplying bulk household, bathroom, kitchen, cleaning, hardware and packaging products to retailers, distributors and businesses.",
-      },
       { name: "author", content: "Zucur Mart" },
       { name: "telephone", content: "+91 6359061362" },
       { name: "email", content: "info@zucur.com" },
       { name: "geo.region", content: "IN-GJ" },
       { name: "geo.placename", content: "Surat" },
-      { property: "og:type", content: "website" },
       { property: "og:site_name", content: "Zucur Mart" },
       { property: "og:locale", content: "en_IN" },
-      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
