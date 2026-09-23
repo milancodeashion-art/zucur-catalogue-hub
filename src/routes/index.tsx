@@ -168,7 +168,9 @@ function HomePage() {
           action={{ to: "/categories", label: "All categories" }}
         />
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {categories.map((category) => (
+          {categories
+            .filter((category) => category.featured)
+            .map((category) => (
             <Link
               key={category.id}
               to="/categories/$slug"

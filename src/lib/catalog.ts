@@ -13,6 +13,7 @@ export interface Category {
   image: string | null;
   display_order: number;
   active: boolean;
+  featured: boolean;
 }
 
 export interface ProductImage {
@@ -63,7 +64,7 @@ export const categoriesQuery = queryOptions({
   queryFn: async (): Promise<Category[]> => {
     const { data, error } = await supabase
       .from("categories")
-      .select("id, name, slug, description, image, display_order, active")
+      .select("id, name, slug, description, image, display_order, active, featured")
       .eq("active", true)
       .order("display_order", { ascending: true });
     if (error) throw error;
