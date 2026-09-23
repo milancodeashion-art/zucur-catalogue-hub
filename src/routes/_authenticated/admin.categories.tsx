@@ -36,6 +36,7 @@ interface Draft {
   image: string;
   display_order: string;
   active: boolean;
+  featured: boolean;
 }
 
 const EMPTY: Draft = {
@@ -45,6 +46,7 @@ const EMPTY: Draft = {
   image: "",
   display_order: "0",
   active: true,
+  featured: false,
 };
 
 function slugify(value: string) {
@@ -65,7 +67,7 @@ function AdminCategories() {
       const from = (page - 1) * PAGE_SIZE;
       const { data, error, count } = await supabase
         .from("categories")
-        .select("id, name, slug, description, image, display_order, active", { count: "exact" })
+        .select("id, name, slug, description, image, display_order, active, featured", { count: "exact" })
         .order("display_order")
         .range(from, from + PAGE_SIZE - 1);
       if (error) throw error;
@@ -88,6 +90,7 @@ function AdminCategories() {
         image: input.image.trim() || null,
         display_order: Number(input.display_order) || 0,
         active: input.active,
+        featured: input.featured,
       };
       if (input.id) {
         const { error } = await supabase.from("categories").update(payload).eq("id", input.id);
@@ -147,13 +150,14 @@ function AdminCategories() {
               <th className="px-4 py-3">Slug</th>
               <th className="px-4 py-3">Order</th>
               <th className="px-4 py-3">Status</th>
+              <th className="px-4 py-3">Featured</th>
               <th className="px-4 py-3 text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
             {categories.isLoading ? (
               <tr>
-                <td colSpan={6} className="px-4 py-6 text-muted-foreground">
+                <td colSpan={7} className="px-4 py-6 text-muted-foreground">
                   Loading…
                 </td>
               </tr>
@@ -177,6 +181,7 @@ function AdminCategories() {
                   <td className="px-4 py-3 text-muted-foreground">{c.slug}</td>
                   <td className="px-4 py-3">{c.display_order}</td>
                   <td className="px-4 py-3">{c.active ? "Active" : "Hidden"}</td>
+                  <td className="px-4 py-3">{c.featured ? "Featured" : "—"}</td>
                   <td className="px-4 py-3">
                     <div className="flex justify-end gap-2">
                       <Button
@@ -191,6 +196,7 @@ function AdminCategories() {
                             image: c.image ?? "",
                             display_order: String(c.display_order),
                             active: c.active,
+                            featured: c.featured,
                           })
                         }
                       >
@@ -211,7 +217,7 @@ function AdminCategories() {
               ))
             ) : (
               <tr>
-                <td colSpan={6} className="px-4 py-6 text-muted-foreground">
+                <td colSpan={7} className="px-4 py-6 text-muted-foreground">
                   No categories yet.
                 </td>
               </tr>
@@ -288,6 +294,14 @@ function AdminCategories() {
                   onCheckedChange={(v) => setDraft({ ...draft, active: v })}
                 />
                 <Label htmlFor="c-active">Visible on site</Label>
+              </div>
+              <div className="flex items-center gap-3">
+                <Switch
+                  id="c-featured"
+                  checked={draft.featured}
+                  onCheckedChange={(v) => setDraft({ ...draft, featured: v })}
+                />
+                <Label htmlFor="c-featured">Featured category</Label>
               </div>
             </div>
           ) : null}
